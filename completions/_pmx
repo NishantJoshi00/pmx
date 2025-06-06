@@ -1,0 +1,29 @@
+#compdef pmx
+
+_pmx() {
+    local -a commands
+    commands=(
+        'set-claude-profile:Set a Claude profile'
+        'reset-claude-profile:Reset the current Claude profile'
+        'list:List available profiles'
+        'completion:Generate shell completions'
+        'help:Print help message'
+    )
+    
+    if (( CURRENT == 2 )); then
+        _describe 'command' commands
+    elif (( CURRENT == 3 )); then
+        case "$words[2]" in
+            set-claude-profile)
+                local -a profiles
+                profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                _describe 'profile' profiles
+                ;;
+            completion)
+                _values 'shell' 'zsh'
+                ;;
+        esac
+    fi
+}
+
+compdef _pmx pmx
