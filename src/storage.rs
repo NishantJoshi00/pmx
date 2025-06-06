@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 use anyhow::ensure;
 
@@ -21,7 +21,7 @@ pub(crate) struct Agents {
 }
 
 impl Config {
-    pub fn persist(&self, path: &PathBuf) -> crate::Result<()> {
+    pub fn persist(&self, path: &Path) -> crate::Result<()> {
         let config_path = path.join("config.toml");
         let config_content = toml::to_string(self)
             .map_err(|e| anyhow::anyhow!("Failed to serialize config: {}", e))?;
@@ -29,7 +29,7 @@ impl Config {
             .map_err(|e| anyhow::anyhow!("Failed to write config file: {}", e))?;
         Ok(())
     }
-    pub fn load(path: &PathBuf) -> crate::Result<Self> {
+    pub fn load(path: &Path) -> crate::Result<Self> {
         let config_path = path.join("config.toml");
         if !config_path.exists() {
             return Err(anyhow::anyhow!(
@@ -55,7 +55,7 @@ impl Storage {
         Ok(storage)
     }
 
-    fn validate(path: &PathBuf) -> crate::Result<()> {
+    fn validate(path: &Path) -> crate::Result<()> {
         ensure!(
             path.exists(),
             "Storage path does not exist: {}",
@@ -161,7 +161,7 @@ impl Storage {
     }
 }
 
-fn recursive_list(path: &PathBuf) -> crate::Result<Vec<PathBuf>> {
+fn recursive_list(path: &Path) -> crate::Result<Vec<PathBuf>> {
     match path {
         path if path.is_dir() => {
             let list = std::fs::read_dir(path)
@@ -177,7 +177,7 @@ fn recursive_list(path: &PathBuf) -> crate::Result<Vec<PathBuf>> {
                 .collect())
         }
 
-        path if path.is_file() => Ok(vec![path.clone()]),
+        path if path.is_file() => Ok(vec![path.to_path_buf()]),
 
         _ => Err(anyhow::anyhow!(
             "Path is neither a file nor a directory: {}",
