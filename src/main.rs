@@ -27,6 +27,14 @@ fn main() -> anyhow::Result<()> {
         cli::Command::ResetClaudeProfile => {
             pmx::commands::claude_code::reset_claude_profile(&storage)?;
         }
+
+        // openai_codex
+        cli::Command::SetCodexProfile(profile) => {
+            pmx::commands::openai_codex::set_codex_profile(&storage, &profile.path)?;
+        }
+        cli::Command::ResetCodexProfile => {
+            pmx::commands::openai_codex::reset_codex_profile(&storage)?;
+        }
     }
 
     Ok(())

@@ -21,6 +21,10 @@ pub enum Command {
     SetClaudeProfile(ClaudeProfile),
     /// Reset the current Claude profile
     ResetClaudeProfile,
+    /// Set Codex profile from a stored configuration
+    SetCodexProfile(CodexProfile),
+    /// Reset the current Codex profile
+    ResetCodexProfile,
     /// List all available profiles
     List,
     /// Generate shell completions
@@ -29,6 +33,12 @@ pub enum Command {
 
 #[derive(Debug, Args)]
 pub struct ClaudeProfile {
+    /// Path to the profile to apply
+    pub path: String,
+}
+
+#[derive(Debug, Args)]
+pub struct CodexProfile {
     /// Path to the profile to apply
     pub path: String,
 }
