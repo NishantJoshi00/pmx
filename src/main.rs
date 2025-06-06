@@ -12,17 +12,20 @@ fn main() -> anyhow::Result<()> {
         .unwrap_or_else(pmx::storage::Storage::auto)?;
 
     match args.command {
+        // utils
         cli::Command::List => {
-            pmx::commands::list(&storage)?;
-        }
-        cli::Command::SetClaudeProfile(profile) => {
-            pmx::commands::set_claude_profile(&storage, &profile.path)?;
-        }
-        cli::Command::ResetClaudeProfile => {
-            pmx::commands::reset_claude_profile(&storage)?;
+            pmx::commands::utils::list(&storage)?;
         }
         cli::Command::Completion(completion) => {
-            pmx::commands::completion(&completion.shell)?;
+            pmx::commands::utils::completion(&completion.shell)?;
+        }
+
+        // claude_code
+        cli::Command::SetClaudeProfile(profile) => {
+            pmx::commands::claude_code::set_claude_profile(&storage, &profile.path)?;
+        }
+        cli::Command::ResetClaudeProfile => {
+            pmx::commands::claude_code::reset_claude_profile(&storage)?;
         }
     }
 

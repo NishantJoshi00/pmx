@@ -4,6 +4,9 @@ use clap::{Args, Parser, Subcommand};
 
 
 #[derive(Parser, Debug)]
+#[command(name = "pmx")]
+#[command(about = "A prompt management suite")]
+#[command(version)]
 pub struct Arg {
     /// Path to the storage directory
     #[arg(long)]
@@ -14,14 +17,19 @@ pub struct Arg {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Set Claude profile from a stored configuration
     SetClaudeProfile(ClaudeProfile),
+    /// Reset the current Claude profile
     ResetClaudeProfile,
+    /// List all available profiles
     List,
+    /// Generate shell completions
     Completion(CompletionArgs),
 }
 
 #[derive(Debug, Args)]
 pub struct ClaudeProfile {
+    /// Path to the profile to apply
     pub path: String,
 }
 

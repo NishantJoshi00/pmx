@@ -146,7 +146,7 @@ impl Storage {
 
     pub fn auto() -> crate::Result<Self> {
         let xdg_data_home = std::env::var("XDG_CONFIG_HOME").ok();
-        let other_path = std::env::home_dir()
+        let other_path = crate::utils::home_dir()
             .map(|p| p.join(".config/pmx"))
             .expect("Failed to get home directory");
 
