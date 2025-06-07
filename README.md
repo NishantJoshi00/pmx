@@ -1,103 +1,147 @@
 # PMX
 
-A CLI tool for managing Claude profile configurations.
+A simple CLI tool to manage and switch between AI agent profiles across different platforms.
 
-## Installation
+## What is PMX?
 
-Install PMX directly from the repository using Cargo:
+PMX helps you organize and quickly switch between different AI agent configurations. Instead of manually editing configuration files or copying profile text, PMX lets you store multiple profiles and apply them with a single command.
 
-```bash
-cargo install --path . --root ~/.local
-```
+Think of it like switching between different "personas" or instruction sets for your AI agents - whether you're doing code reviews, writing documentation, or working on specific projects.
 
-This will install the `pmx` binary to `~/.local/bin/pmx`. Make sure `~/.local/bin` is in your PATH.
+## Why Use PMX?
 
-Alternatively, you can install it globally:
+- **Quick Profile Switching**: Change your AI agent's behavior instantly
+- **Multi-Platform**: Works with Claude Code, OpenAI Codex, and more
+- **Profile Library**: Store and organize multiple profiles in one place
+- **Easy Sharing**: Copy profiles to clipboard for quick sharing
+- **Zero Setup**: Auto-discovers configuration directories
+
+## 🚀 Installation
 
 ```bash
 cargo install --path .
 ```
 
-## Usage
+Or install to a specific location:
+```bash
+cargo install --path . --root ~/.local
+```
 
-PMX manages Claude profile configurations by storing them in a local repository and applying them to `~/.claude/CLAUDE.md`.
+## 📋 How to Use
+
+### Basic Workflow
+
+1. **Store your profiles** as `.md` files in `~/.config/pmx/repo/`
+2. **List available profiles** to see what you have
+3. **Apply a profile** to your AI agent
+4. **Reset when needed** to clear the current profile
 
 ### Commands
 
-- **List available profiles:**
-  ```bash
-  pmx list
-  ```
-
-- **Set a Claude profile:**
-  ```bash
-  pmx set-claude-profile <profile-name>
-  ```
-
-- **Reset the current Claude profile:**
-  ```bash
-  pmx reset-claude-profile
-  ```
-
-- **Generate shell completions:**
-  ```bash
-  pmx completion zsh
-  ```
-
-### Configuration
-
-PMX automatically creates a configuration directory at:
-- `$XDG_CONFIG_HOME/pmx` (if XDG_CONFIG_HOME is set)
-- `~/.config/pmx` (fallback)
-
-You can also specify a custom config location:
+**See what profiles you have:**
 ```bash
-pmx --config /path/to/config <command>
+pmx list
 ```
 
-Or set the environment variable:
+**Apply a profile to Claude Code:**
 ```bash
-export PMX_CONFIG_FILE=/path/to/config
+pmx set-claude-profile my-code-reviewer
 ```
 
-### Setting up Shell Completions
-
-#### Zsh
-
-To enable zsh completions, add the following to your `.zshrc`:
-
+**Apply a profile to OpenAI Codex:**
 ```bash
-# Create a directory for completions if it doesn't exist
-mkdir -p ~/.local/share/zsh/completions
-
-# Generate and save the completion script
-pmx completion zsh > ~/.local/share/zsh/completions/_pmx
-
-# Add the completion directory to fpath (add this to your .zshrc)
-fpath=(~/.local/share/zsh/completions $fpath)
-
-# Initialize completions
-autoload -U compinit && compinit
+pmx set-codex-profile my-documentation-writer
 ```
 
-## Configuration Structure
+**Copy a profile to your clipboard:**
+```bash
+pmx copy-profile project-specific-instructions
+```
 
-PMX expects the following directory structure:
+**Remove the current profile:**
+```bash
+pmx reset-claude-profile
+pmx reset-codex-profile
+```
+
+### Example Use Cases
+
+**Code Review Profile:**
+```bash
+pmx set-claude-profile code-reviewer
+# Now Claude will focus on security, performance, and best practices
+```
+
+**Documentation Writer:**
+```bash
+pmx set-claude-profile tech-writer
+# Now Claude will write clear, user-friendly documentation
+```
+
+**Project-Specific Instructions:**
+```bash
+pmx set-claude-profile my-startup-context
+# Now Claude knows your company's coding standards and domain
+```
+
+## 📁 Profile Organization
+
+PMX stores profiles in `~/.config/pmx/repo/` as Markdown files:
 
 ```
 ~/.config/pmx/
-├── config.toml          # Configuration file
-└── repo/                # Profile repository
-    ├── profile1.md      # Claude profile files
-    ├── profile2.md
-    └── ...
+├── config.toml              # Settings
+└── repo/                    # Your profiles
+    ├── code-reviewer.md     # Focuses on code quality
+    ├── tech-writer.md       # Great at documentation
+    ├── debugging-expert.md  # Helps solve complex bugs
+    └── startup-context.md   # Knows your project specifics
 ```
 
-The `config.toml` file contains agent configuration:
+Each profile is just a `.md` file containing the instructions you want your AI agent to follow.
 
-```toml
-[agents]
-disable_claude = false
-disable_codex = false
-disable_cline = false
+## ⚙️ Setup
+
+PMX works out of the box! It automatically:
+- Creates the config directory at `~/.config/pmx/`
+- Sets up the profile repository in `repo/`
+- Configures agent settings in `config.toml`
+
+You can customize the location:
+```bash
+export PMX_CONFIG_FILE=/path/to/your/config
 ```
+
+## 🔧 Shell Completions
+
+Make typing commands faster with auto-completion:
+
+```bash
+# For Zsh
+source <(pmx completion zsh)
+```
+
+## 🏗️ How It Works
+
+PMX is built in Rust with a modular architecture:
+
+- **Storage System**: Auto-discovers config directories and manages profiles
+- **CLI Interface**: Clean command parsing with clap
+- **Agent Modules**: Separate handlers for Claude Code (`~/.claude/CLAUDE.md`) and Codex (`~/.codex/AGENTS.md`)
+- **Profile Management**: Simple file-based storage with clipboard integration
+
+The tool follows a configuration-first approach where agent support can be conditionally enabled/disabled via `config.toml`.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Test with `cargo test`
+4. Format with `cargo fmt`
+5. Submit a pull request
+
+---
+
+<div align="center">
+Built by Human, Documented by LLM.
+</div>
