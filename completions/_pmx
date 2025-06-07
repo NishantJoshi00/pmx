@@ -2,22 +2,77 @@
 
 _pmx() {
     local -a commands
-    commands=(
-        'set-claude-profile:Set a Claude profile'
-        'reset-claude-profile:Reset the current Claude profile'
-        'set-codex-profile:Set a Codex profile'
-        'reset-codex-profile:Reset the current Codex profile'
-        'list:List available profiles'
-        'copy-profile:Copy profile contents to clipboard'
-        'completion:Generate shell completions'
-        'help:Print help message'
-    )
+    
+    # Get enabled commands dynamically, fallback to static list
+    local enabled_commands
+    enabled_commands=$(pmx internal-completion enabled-commands 2>/dev/null)
+    
+    if [[ -n "$enabled_commands" ]]; then
+        # Build commands array from enabled commands
+        commands=()
+        while IFS= read -r cmd; do
+            case "$cmd" in
+                set-claude-profile)
+                    commands+=('set-claude-profile:Set a Claude profile')
+                    ;;
+                reset-claude-profile)
+                    commands+=('reset-claude-profile:Reset the current Claude profile')
+                    ;;
+                set-codex-profile)
+                    commands+=('set-codex-profile:Set a Codex profile')
+                    ;;
+                reset-codex-profile)
+                    commands+=('reset-codex-profile:Reset the current Codex profile')
+                    ;;
+                list)
+                    commands+=('list:List available profiles')
+                    ;;
+                copy-profile)
+                    commands+=('copy-profile:Copy profile contents to clipboard')
+                    ;;
+                completion)
+                    commands+=('completion:Generate shell completions')
+                    ;;
+            esac
+        done <<< "$enabled_commands"
+        commands+=('help:Print help message')
+    else
+        # Fallback to static command list
+        commands=(
+            'set-claude-profile:Set a Claude profile'
+            'reset-claude-profile:Reset the current Claude profile'
+            'set-codex-profile:Set a Codex profile'
+            'reset-codex-profile:Reset the current Codex profile'
+            'list:List available profiles'
+            'copy-profile:Copy profile contents to clipboard'
+            'completion:Generate shell completions'
+            'help:Print help message'
+        )
+    fi
     
     if (( CURRENT == 2 )); then
         _describe 'command' commands
     elif (( CURRENT == 3 )); then
         case "$words[2]" in
-            set-claude-profile|set-codex-profile|copy-profile)
+            set-claude-profile)
+                local -a claude_profiles
+                claude_profiles=(${(f)"$(pmx internal-completion claude-profiles 2>/dev/null)"})
+                if [[ ${#claude_profiles[@]} -eq 0 ]]; then
+                    # Fallback to general list
+                    claude_profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                fi
+                _describe 'profile' claude_profiles
+                ;;
+            set-codex-profile)
+                local -a codex_profiles
+                codex_profiles=(${(f)"$(pmx internal-completion codex-profiles 2>/dev/null)"})
+                if [[ ${#codex_profiles[@]} -eq 0 ]]; then
+                    # Fallback to general list
+                    codex_profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                fi
+                _describe 'profile' codex_profiles
+                ;;
+            copy-profile)
                 local -a profiles
                 profiles=(${(f)"$(pmx list 2>/dev/null)"})
                 _describe 'profile' profiles

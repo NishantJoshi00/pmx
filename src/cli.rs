@@ -31,6 +31,9 @@ pub enum Command {
     CopyProfile(CopyProfile),
     /// Generate shell completions
     Completion(CompletionArgs),
+    /// Internal completion commands (hidden)
+    #[command(subcommand, hide = true)]
+    InternalCompletion(InternalCompletionCommand),
 }
 
 #[derive(Debug, Args)]
@@ -61,4 +64,14 @@ pub struct CompletionArgs {
 #[derive(Debug, Clone, clap::ValueEnum)]
 pub enum Shell {
     Zsh,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum InternalCompletionCommand {
+    /// List available Claude profiles (internal)
+    ClaudeProfiles,
+    /// List available Codex profiles (internal)
+    CodexProfiles,
+    /// List enabled agent commands (internal)
+    EnabledCommands,
 }

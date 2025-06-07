@@ -38,6 +38,11 @@ fn main() -> anyhow::Result<()> {
         cli::Command::ResetCodexProfile => {
             pmx::commands::openai_codex::reset_codex_profile(&storage)?;
         }
+
+        // internal completion
+        cli::Command::InternalCompletion(completion_cmd) => {
+            pmx::commands::utils::internal_completion(&storage, &completion_cmd)?;
+        }
     }
 
     Ok(())
