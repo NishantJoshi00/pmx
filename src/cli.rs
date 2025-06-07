@@ -48,7 +48,6 @@ pub struct CodexProfile {
     pub path: String,
 }
 
-
 #[derive(Debug, Args)]
 pub struct CompletionArgs {
     /// Shell to generate completions for

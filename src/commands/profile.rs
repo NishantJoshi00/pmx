@@ -96,9 +96,14 @@ pub fn create(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
     // Check if the content is effectively empty (only whitespace, comments, or original template)
     let trimmed_content = content.trim();
     let template_header = format!("# {}", name);
-    let is_empty = trimmed_content.is_empty() 
+    let is_empty = trimmed_content.is_empty()
         || trimmed_content == template_header
-        || trimmed_content == format!("{}\n\n<!-- Add your profile content here -->", template_header).trim()
+        || trimmed_content
+            == format!(
+                "{}\n\n<!-- Add your profile content here -->",
+                template_header
+            )
+            .trim()
         || trimmed_content.lines().all(|line| {
             let line = line.trim();
             line.is_empty() || line.starts_with('#') || line.starts_with("<!--")

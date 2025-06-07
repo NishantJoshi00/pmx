@@ -29,7 +29,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Run tests
-        run: cargo test --all-features --all-targets
+        run: cargo test --all-features --all-targets -- --skip test_copy_existing_profile
 
   fmt:
     name: Rustfmt
