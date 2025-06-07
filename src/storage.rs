@@ -144,6 +144,16 @@ impl Storage {
         Ok(list)
     }
 
+    pub fn get_repo_path(&self, path: &str) -> crate::Result<PathBuf> {
+        let repo_path = self.path.join("repo").join(format!("{}.md", path));
+        ensure!(
+            repo_path.exists(),
+            "Profile not found: {}",
+            path
+        );
+        Ok(repo_path)
+    }
+
     pub fn auto() -> crate::Result<Self> {
         let xdg_data_home = std::env::var("XDG_CONFIG_HOME").ok();
         let other_path = crate::utils::home_dir()

@@ -16,6 +16,9 @@ fn main() -> anyhow::Result<()> {
         cli::Command::List => {
             pmx::commands::utils::list(&storage)?;
         }
+        cli::Command::CopyProfile(profile) => {
+            pmx::commands::utils::copy_profile(&profile.path, &storage)?;
+        }
         cli::Command::Completion(completion) => {
             pmx::commands::utils::completion(&completion.shell)?;
         }

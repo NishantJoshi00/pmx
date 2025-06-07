@@ -27,6 +27,8 @@ pub enum Command {
     ResetCodexProfile,
     /// List all available profiles
     List,
+    /// Copy profile contents to clipboard
+    CopyProfile(CopyProfile),
     /// Generate shell completions
     Completion(CompletionArgs),
 }
@@ -40,6 +42,12 @@ pub struct ClaudeProfile {
 #[derive(Debug, Args)]
 pub struct CodexProfile {
     /// Path to the profile to apply
+    pub path: String,
+}
+
+#[derive(Debug, Args)]
+pub struct CopyProfile {
+    /// Path to the profile to copy
     pub path: String,
 }
 

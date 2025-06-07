@@ -8,6 +8,7 @@ _pmx() {
         'set-codex-profile:Set a Codex profile'
         'reset-codex-profile:Reset the current Codex profile'
         'list:List available profiles'
+        'copy-profile:Copy profile contents to clipboard'
         'completion:Generate shell completions'
         'help:Print help message'
     )
@@ -16,7 +17,7 @@ _pmx() {
         _describe 'command' commands
     elif (( CURRENT == 3 )); then
         case "$words[2]" in
-            set-claude-profile|set-codex-profile)
+            set-claude-profile|set-codex-profile|copy-profile)
                 local -a profiles
                 profiles=(${(f)"$(pmx list 2>/dev/null)"})
                 _describe 'profile' profiles
