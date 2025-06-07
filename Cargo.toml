@@ -9,6 +9,8 @@ anyhow = "1.0.98"
 serde = { version = "1.0.219", features = ["derive"] }
 toml = "0.8.22"
 arboard = "3.2.0"
+dialoguer = "0.11.0"
+tempfile = "3.20.0"
 
 [dev-dependencies]
 tempfile = "3.20.0"

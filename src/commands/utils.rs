@@ -12,17 +12,16 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
     Ok(())
 }
 
-
 pub fn copy_profile(path: &str, storage: &crate::storage::Storage) -> crate::Result<()> {
     use arboard::Clipboard;
     use std::fs;
-    
+
     let profile_path = storage.get_repo_path(path)?;
     let content = fs::read_to_string(&profile_path)?;
-    
+
     let mut clipboard = Clipboard::new()?;
     clipboard.set_text(content)?;
-    
+
     println!("Profile content copied to clipboard: {}", path);
     Ok(())
 }
@@ -63,7 +62,8 @@ pub fn internal_completion(
             println!("list");
             println!("copy-profile");
             println!("completion");
-            
+            println!("profile");
+
             // Agent-specific commands
             if !storage.config.agents.disable_claude {
                 println!("set-claude-profile");
@@ -74,6 +74,12 @@ pub fn internal_completion(
                 println!("reset-codex-profile");
             }
         }
+        crate::cli::InternalCompletionCommand::ProfileNames => {
+            let profile_list = storage.list_repos()?;
+            profile_list
+                .iter()
+                .for_each(|profile| println!("{}", profile));
+        }
     }
     Ok(())
 }
@@ -81,17 +87,20 @@ pub fn internal_completion(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::storage::{Config, Agents};
-    use tempfile::TempDir;
+    use crate::storage::{Agents, Config};
     use std::fs;
+    use tempfile::TempDir;
 
-    fn create_test_storage(disable_claude: bool, disable_codex: bool) -> (TempDir, crate::storage::Storage) {
+    fn create_test_storage(
+        disable_claude: bool,
+        disable_codex: bool,
+    ) -> (TempDir, crate::storage::Storage) {
         let temp_dir = TempDir::new().unwrap();
         let config_path = temp_dir.path().join("config.toml");
         let repo_dir = temp_dir.path().join("repo");
-        
+
         fs::create_dir(&repo_dir).unwrap();
-        
+
         let config = Config {
             agents: Agents {
                 disable_claude,
@@ -99,14 +108,14 @@ mod tests {
                 disable_cline: false,
             },
         };
-        
+
         let config_content = toml::to_string(&config).unwrap();
         fs::write(&config_path, config_content).unwrap();
-        
+
         // Create test profile
         let test_profile = repo_dir.join("test_profile.md");
         fs::write(&test_profile, "# Test Profile\nThis is a test profile.").unwrap();
-        
+
         let storage = crate::storage::Storage::new(temp_dir.path().to_path_buf()).unwrap();
         (temp_dir, storage)
     }
@@ -114,7 +123,7 @@ mod tests {
     #[test]
     fn test_internal_completion_claude_profiles_enabled() {
         let (_temp_dir, storage) = create_test_storage(false, false);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::ClaudeProfiles;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -123,7 +132,7 @@ mod tests {
     #[test]
     fn test_internal_completion_claude_profiles_disabled() {
         let (_temp_dir, storage) = create_test_storage(true, false);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::ClaudeProfiles;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -132,7 +141,7 @@ mod tests {
     #[test]
     fn test_internal_completion_codex_profiles_enabled() {
         let (_temp_dir, storage) = create_test_storage(false, false);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::CodexProfiles;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -141,7 +150,7 @@ mod tests {
     #[test]
     fn test_internal_completion_codex_profiles_disabled() {
         let (_temp_dir, storage) = create_test_storage(false, true);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::CodexProfiles;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -150,7 +159,7 @@ mod tests {
     #[test]
     fn test_internal_completion_enabled_commands_all_enabled() {
         let (_temp_dir, storage) = create_test_storage(false, false);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::EnabledCommands;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -159,7 +168,7 @@ mod tests {
     #[test]
     fn test_internal_completion_enabled_commands_claude_disabled() {
         let (_temp_dir, storage) = create_test_storage(true, false);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::EnabledCommands;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -168,7 +177,7 @@ mod tests {
     #[test]
     fn test_internal_completion_enabled_commands_codex_disabled() {
         let (_temp_dir, storage) = create_test_storage(false, true);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::EnabledCommands;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
@@ -177,7 +186,7 @@ mod tests {
     #[test]
     fn test_internal_completion_enabled_commands_all_disabled() {
         let (_temp_dir, storage) = create_test_storage(true, true);
-        
+
         let cmd = crate::cli::InternalCompletionCommand::EnabledCommands;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());

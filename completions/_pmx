@@ -27,8 +27,8 @@ _pmx() {
                 list)
                     commands+=('list:List available profiles')
                     ;;
-                copy-profile)
-                    commands+=('copy-profile:Copy profile contents to clipboard')
+                profile)
+                    commands+=('profile:Profile management commands')
                     ;;
                 completion)
                     commands+=('completion:Generate shell completions')
@@ -44,7 +44,7 @@ _pmx() {
             'set-codex-profile:Set a Codex profile'
             'reset-codex-profile:Reset the current Codex profile'
             'list:List available profiles'
-            'copy-profile:Copy profile contents to clipboard'
+            'profile:Profile management commands'
             'completion:Generate shell completions'
             'help:Print help message'
         )
@@ -72,13 +72,39 @@ _pmx() {
                 fi
                 _describe 'profile' codex_profiles
                 ;;
-            copy-profile)
-                local -a profiles
-                profiles=(${(f)"$(pmx list 2>/dev/null)"})
-                _describe 'profile' profiles
+            profile)
+                local -a profile_commands
+                profile_commands=(
+                    'edit:Edit an existing profile using $EDITOR'
+                    'delete:Delete a profile (with confirmation)'
+                    'create:Create a new profile using $EDITOR'
+                    'show:Show profile content'
+                    'copy:Copy profile contents to clipboard'
+                )
+                _describe 'subcommand' profile_commands
                 ;;
             completion)
                 _values 'shell' 'zsh'
+                ;;
+        esac
+    elif (( CURRENT == 4 )); then
+        case "$words[2]" in
+            profile)
+                case "$words[3]" in
+                    edit|delete|show|copy)
+                        local -a profiles
+                        profiles=(${(f)"$(pmx internal-completion profile-names 2>/dev/null)"})
+                        if [[ ${#profiles[@]} -eq 0 ]]; then
+                            # Fallback to general list
+                            profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                        fi
+                        _describe 'profile' profiles
+                        ;;
+                    create)
+                        # For create, we don't complete existing profiles since it's a new name
+                        _message "profile name"
+                        ;;
+                esac
                 ;;
         esac
     fi

@@ -42,7 +42,6 @@ This is a Rust CLI tool (`pmx`) for managing Claude profile configurations. The 
   - `reset-claude-profile`: Removes the current Claude profile
   - `set-codex-profile <path>`: Applies a profile to `~/.codex/AGENTS.md`
   - `reset-codex-profile`: Removes the current Codex profile
-  - `copy-profile <path>`: Copies profile content to clipboard
   - `completion <shell>`: Generates shell completions
 
 - **Storage System** (`storage.rs`): Manages profile storage with automatic configuration discovery:

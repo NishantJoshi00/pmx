@@ -16,12 +16,28 @@ fn main() -> anyhow::Result<()> {
         cli::Command::List => {
             pmx::commands::utils::list(&storage)?;
         }
-        cli::Command::CopyProfile(profile) => {
-            pmx::commands::utils::copy_profile(&profile.path, &storage)?;
-        }
         cli::Command::Completion(completion) => {
             pmx::commands::utils::completion(&completion.shell)?;
         }
+
+        // profile management
+        cli::Command::Profile(profile_cmd) => match profile_cmd {
+            cli::ProfileCommand::Edit(args) => {
+                pmx::commands::profile::edit(&storage, &args.name)?;
+            }
+            cli::ProfileCommand::Delete(args) => {
+                pmx::commands::profile::delete(&storage, &args.name)?;
+            }
+            cli::ProfileCommand::Create(args) => {
+                pmx::commands::profile::create(&storage, &args.name)?;
+            }
+            cli::ProfileCommand::Show(args) => {
+                pmx::commands::profile::show(&storage, &args.name)?;
+            }
+            cli::ProfileCommand::Copy(args) => {
+                pmx::commands::profile::copy(&storage, &args.name)?;
+            }
+        },
 
         // claude_code
         cli::Command::SetClaudeProfile(profile) => {

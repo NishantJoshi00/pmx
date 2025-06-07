@@ -1,4 +1,4 @@
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
 use anyhow::ensure;
 
@@ -146,12 +146,44 @@ impl Storage {
 
     pub fn get_repo_path(&self, path: &str) -> crate::Result<PathBuf> {
         let repo_path = self.path.join("repo").join(format!("{}.md", path));
-        ensure!(
-            repo_path.exists(),
-            "Profile not found: {}",
-            path
-        );
+        ensure!(repo_path.exists(), "Profile not found: {}", path);
         Ok(repo_path)
+    }
+
+    pub fn profile_exists(&self, name: &str) -> bool {
+        let repo_path = self.path.join("repo").join(format!("{}.md", name));
+        repo_path.exists()
+    }
+
+    pub fn create_profile(&self, name: &str, content: &str) -> crate::Result<()> {
+        let repo_path = self.path.join("repo").join(format!("{}.md", name));
+
+        // Ensure parent directory exists
+        if let Some(parent) = repo_path.parent() {
+            std::fs::create_dir_all(parent)
+                .map_err(|e| anyhow::anyhow!("Failed to create profile directory: {}", e))?;
+        }
+
+        std::fs::write(&repo_path, content)
+            .map_err(|e| anyhow::anyhow!("Failed to create profile '{}': {}", name, e))?;
+
+        Ok(())
+    }
+
+    pub fn delete_profile(&self, name: &str) -> crate::Result<()> {
+        let repo_path = self.get_repo_path(name)?; // This ensures the profile exists
+
+        std::fs::remove_file(&repo_path)
+            .map_err(|e| anyhow::anyhow!("Failed to delete profile '{}': {}", name, e))?;
+
+        Ok(())
+    }
+
+    pub fn get_profile_content(&self, name: &str) -> crate::Result<String> {
+        let repo_path = self.get_repo_path(name)?; // This ensures the profile exists
+
+        std::fs::read_to_string(&repo_path)
+            .map_err(|e| anyhow::anyhow!("Failed to read profile '{}': {}", name, e))
     }
 
     pub fn auto() -> crate::Result<Self> {

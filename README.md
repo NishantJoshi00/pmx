@@ -55,7 +55,7 @@ pmx set-codex-profile my-documentation-writer
 
 **Copy a profile to your clipboard:**
 ```bash
-pmx copy-profile project-specific-instructions
+pmx profile copy project-specific-instructions
 ```
 
 **Remove the current profile:**

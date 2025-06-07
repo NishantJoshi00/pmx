@@ -2,7 +2,6 @@ use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand};
 
-
 #[derive(Parser, Debug)]
 #[command(name = "pmx")]
 #[command(about = "A prompt management suite")]
@@ -27,8 +26,9 @@ pub enum Command {
     ResetCodexProfile,
     /// List all available profiles
     List,
-    /// Copy profile contents to clipboard
-    CopyProfile(CopyProfile),
+    /// Profile management commands
+    #[command(subcommand)]
+    Profile(ProfileCommand),
     /// Generate shell completions
     Completion(CompletionArgs),
     /// Internal completion commands (hidden)
@@ -48,11 +48,6 @@ pub struct CodexProfile {
     pub path: String,
 }
 
-#[derive(Debug, Args)]
-pub struct CopyProfile {
-    /// Path to the profile to copy
-    pub path: String,
-}
 
 #[derive(Debug, Args)]
 pub struct CompletionArgs {
@@ -67,6 +62,26 @@ pub enum Shell {
 }
 
 #[derive(Debug, Subcommand)]
+pub enum ProfileCommand {
+    /// Edit an existing profile using $EDITOR
+    Edit(ProfileArgs),
+    /// Delete a profile (with confirmation)
+    Delete(ProfileArgs),
+    /// Create a new profile using $EDITOR
+    Create(ProfileArgs),
+    /// Show profile content
+    Show(ProfileArgs),
+    /// Copy profile contents to clipboard
+    Copy(ProfileArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct ProfileArgs {
+    /// Name of the profile
+    pub name: String,
+}
+
+#[derive(Debug, Subcommand)]
 pub enum InternalCompletionCommand {
     /// List available Claude profiles (internal)
     ClaudeProfiles,
@@ -74,4 +89,6 @@ pub enum InternalCompletionCommand {
     CodexProfiles,
     /// List enabled agent commands (internal)
     EnabledCommands,
+    /// List available profiles for profile commands (internal)
+    ProfileNames,
 }
