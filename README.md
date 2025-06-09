@@ -1,6 +1,17 @@
+<div align="center">
+
+<!-- Light mode logo -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="assets/light.png">
+  <img alt="PMX Logo" src="assets/light.png" width="200">
+</picture>
+
 # PMX
 
 A simple CLI tool to manage and switch between AI agent profiles across different platforms.
+
+</div>
 
 ## What is PMX?
 
