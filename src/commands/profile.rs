@@ -182,10 +182,26 @@ fn validate_profile_name(name: &str) -> crate::Result<()> {
     }
 
     // Check for path traversal attempts
-    if name.contains("..") || name.contains('/') || name.contains('\\') {
+    if name.contains("..") || name.contains('\\') {
         return Err(anyhow!(
-            "Profile name cannot contain path separators or '..'"
+            "Profile name cannot contain '..' or backslashes"
         ));
+    }
+
+    // Ensure no empty path components when using forward slashes
+    if name.contains('/') {
+        for component in name.split('/') {
+            if component.is_empty() {
+                return Err(anyhow!(
+                    "Profile name cannot have empty path components"
+                ));
+            }
+            if component == "." || component == ".." {
+                return Err(anyhow!(
+                    "Profile name cannot contain '.' or '..' path components"
+                ));
+            }
+        }
     }
 
     // Check for invalid characters
@@ -238,16 +254,22 @@ mod tests {
         assert!(validate_profile_name("valid_name").is_ok());
         assert!(validate_profile_name("valid-name").is_ok());
         assert!(validate_profile_name("valid123").is_ok());
+        assert!(validate_profile_name("design/plan").is_ok());
+        assert!(validate_profile_name("category/subcategory/name").is_ok());
     }
 
     #[test]
     fn test_validate_profile_name_invalid() {
         assert!(validate_profile_name("").is_err());
         assert!(validate_profile_name("../invalid").is_err());
-        assert!(validate_profile_name("invalid/name").is_err());
         assert!(validate_profile_name("invalid\\name").is_err());
         assert!(validate_profile_name("invalid<name").is_err());
         assert!(validate_profile_name(&"x".repeat(256)).is_err());
+        assert!(validate_profile_name("invalid/").is_err()); // empty component
+        assert!(validate_profile_name("/invalid").is_err()); // empty component
+        assert!(validate_profile_name("invalid//name").is_err()); // empty component
+        assert!(validate_profile_name("invalid/.").is_err()); // dot component
+        assert!(validate_profile_name("invalid/..").is_err()); // dotdot component
     }
 
     #[test]
