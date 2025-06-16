@@ -1,4 +1,8 @@
 pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
+    use is_terminal::IsTerminal;
+    use std::collections::BTreeMap;
+    use std::io;
+
     let profile_list = storage.list_repos()?;
 
     if profile_list.is_empty() {
@@ -6,9 +10,60 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
         return Ok(());
     }
 
-    profile_list
-        .iter()
-        .for_each(|profile| println!("{}", profile));
+    // If output is piped, use the simple format
+    if !io::stdout().is_terminal() {
+        profile_list
+            .iter()
+            .for_each(|profile| println!("{}", profile));
+        return Ok(());
+    }
+
+    // For terminal output, create a tree-like structure
+    let mut tree: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    
+    for profile in &profile_list {
+        if let Some(slash_pos) = profile.find('/') {
+            let (dir, file) = profile.split_at(slash_pos);
+            let file = &file[1..]; // Remove the leading '/'
+            tree.entry(dir.to_string()).or_default().push(file.to_string());
+        } else {
+            tree.entry(String::new()).or_default().push(profile.clone());
+        }
+    }
+
+    // Print the tree
+    let dirs: Vec<_> = tree.keys().collect();
+    for (i, dir) in dirs.iter().enumerate() {
+        let is_last_dir = i == dirs.len() - 1;
+        
+        if dir.is_empty() {
+            // Root level files
+            if let Some(files) = tree.get(*dir) {
+                for (j, file) in files.iter().enumerate() {
+                    let is_last_file = j == files.len() - 1 && is_last_dir;
+                    let prefix = if is_last_file { "└── " } else { "├── " };
+                    println!("{}{}", prefix, file);
+                }
+            }
+        } else {
+            // Directory
+            let dir_prefix = if is_last_dir { "└── " } else { "├── " };
+            println!("{}{}/", dir_prefix, dir);
+            
+            if let Some(files) = tree.get(*dir) {
+                for (j, file) in files.iter().enumerate() {
+                    let is_last_file = j == files.len() - 1;
+                    let file_prefix = if is_last_dir {
+                        if is_last_file { "    └── " } else { "    ├── " }
+                    } else {
+                        if is_last_file { "│   └── " } else { "│   ├── " }
+                    };
+                    println!("{}{}", file_prefix, file);
+                }
+            }
+        }
+    }
+    
     Ok(())
 }
 

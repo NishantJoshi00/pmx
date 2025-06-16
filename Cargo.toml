@@ -11,6 +11,7 @@ toml = "0.8.22"
 arboard = "3.2.0"
 dialoguer = "0.11.0"
 tempfile = "3.20.0"
+is-terminal = "0.4"
 
 [dev-dependencies]
 tempfile = "3.20.0"

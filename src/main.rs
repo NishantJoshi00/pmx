@@ -13,15 +13,15 @@ fn main() -> anyhow::Result<()> {
 
     match args.command {
         // utils
-        cli::Command::List => {
-            pmx::commands::utils::list(&storage)?;
-        }
         cli::Command::Completion(completion) => {
             pmx::commands::utils::completion(&completion.shell)?;
         }
 
         // profile management
         cli::Command::Profile(profile_cmd) => match profile_cmd {
+            cli::ProfileCommand::List => {
+                pmx::commands::utils::list(&storage)?;
+            }
             cli::ProfileCommand::Edit(args) => {
                 pmx::commands::profile::edit(&storage, &args.name)?;
             }

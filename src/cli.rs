@@ -24,8 +24,6 @@ pub enum Command {
     SetCodexProfile(CodexProfile),
     /// Reset the current Codex profile
     ResetCodexProfile,
-    /// List all available profiles
-    List,
     /// Profile management commands
     #[command(subcommand)]
     Profile(ProfileCommand),
@@ -62,6 +60,8 @@ pub enum Shell {
 
 #[derive(Debug, Subcommand)]
 pub enum ProfileCommand {
+    /// List all available profiles
+    List,
     /// Edit an existing profile using $EDITOR
     Edit(ProfileArgs),
     /// Delete a profile (with confirmation)
