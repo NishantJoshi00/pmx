@@ -24,9 +24,6 @@ _pmx() {
                 reset-codex-profile)
                     commands+=('reset-codex-profile:Reset the current Codex profile')
                     ;;
-                list)
-                    commands+=('list:List available profiles')
-                    ;;
                 profile)
                     commands+=('profile:Profile management commands')
                     ;;
@@ -43,7 +40,6 @@ _pmx() {
             'reset-claude-profile:Reset the current Claude profile'
             'set-codex-profile:Set a Codex profile'
             'reset-codex-profile:Reset the current Codex profile'
-            'list:List available profiles'
             'profile:Profile management commands'
             'completion:Generate shell completions'
             'help:Print help message'
@@ -59,7 +55,7 @@ _pmx() {
                 claude_profiles=(${(f)"$(pmx internal-completion claude-profiles 2>/dev/null)"})
                 if [[ ${#claude_profiles[@]} -eq 0 ]]; then
                     # Fallback to general list
-                    claude_profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                    claude_profiles=(${(f)"$(pmx profile list 2>/dev/null)"})
                 fi
                 _describe 'profile' claude_profiles
                 ;;
@@ -68,13 +64,14 @@ _pmx() {
                 codex_profiles=(${(f)"$(pmx internal-completion codex-profiles 2>/dev/null)"})
                 if [[ ${#codex_profiles[@]} -eq 0 ]]; then
                     # Fallback to general list
-                    codex_profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                    codex_profiles=(${(f)"$(pmx profile list 2>/dev/null)"})
                 fi
                 _describe 'profile' codex_profiles
                 ;;
             profile)
                 local -a profile_commands
                 profile_commands=(
+                    'list:List all available profiles'
                     'edit:Edit an existing profile using $EDITOR'
                     'delete:Delete a profile (with confirmation)'
                     'create:Create a new profile using $EDITOR'
@@ -96,7 +93,7 @@ _pmx() {
                         profiles=(${(f)"$(pmx internal-completion profile-names 2>/dev/null)"})
                         if [[ ${#profiles[@]} -eq 0 ]]; then
                             # Fallback to general list
-                            profiles=(${(f)"$(pmx list 2>/dev/null)"})
+                            profiles=(${(f)"$(pmx profile list 2>/dev/null)"})
                         fi
                         _describe 'profile' profiles
                         ;;

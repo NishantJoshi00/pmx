@@ -114,10 +114,8 @@ pub fn internal_completion(
         }
         crate::cli::InternalCompletionCommand::EnabledCommands => {
             // Always available commands
-            println!("list");
-            println!("copy-profile");
-            println!("completion");
             println!("profile");
+            println!("completion");
 
             // Agent-specific commands
             if !storage.config.agents.disable_claude {

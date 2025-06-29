@@ -1,0 +1,161 @@
+.TH PMX 1 "2025-06-25" "pmx 0.1.0" "User Commands"
+.SH NAME
+pmx \- A prompt management suite for Claude and Codex profiles
+.SH SYNOPSIS
+.B pmx
+[\fIOPTIONS\fR]
+.I COMMAND
+.br
+.B pmx
+.B set-claude-profile
+.I PROFILE_NAME
+.br
+.B pmx
+.B reset-claude-profile
+.br
+.B pmx
+.B set-codex-profile
+.I PROFILE_NAME
+.br
+.B pmx
+.B reset-codex-profile
+.br
+.B pmx
+.B profile
+.I SUBCOMMAND
+.br
+.B pmx
+.B completion
+.I SHELL
+.SH DESCRIPTION
+.B pmx
+is a command-line tool for managing prompt profiles for AI coding assistants like Claude and Codex. It allows you to store, organize, and apply different configuration profiles to your development environment.
+
+The tool manages profiles stored in markdown files and can apply them to the appropriate configuration locations:
+.IP \[bu] 2
+Claude profiles are applied to ~/.claude/CLAUDE.md
+.IP \[bu] 2
+Codex profiles are applied to ~/.codex/AGENTS.md
+
+Configuration is automatically discovered in $XDG_CONFIG_HOME/pmx or ~/.config/pmx, with profiles stored in the repo/ subdirectory.
+.SH OPTIONS
+.TP
+.BR \-\-config " " \fICONFIG\fR
+Path to the storage directory (overrides default configuration discovery)
+.TP
+.BR \-h ", " \-\-help
+Print help information
+.TP
+.BR \-V ", " \-\-version
+Print version information
+.SH COMMANDS
+.SS Claude Profile Management
+.TP
+.B set-claude-profile \fIPROFILE_NAME\fR
+Set Claude profile from a stored configuration. Applies the specified profile to ~/.claude/CLAUDE.md
+.TP
+.B reset-claude-profile
+Reset the current Claude profile by removing ~/.claude/CLAUDE.md
+.SS Codex Profile Management
+.TP
+.B set-codex-profile \fIPROFILE_NAME\fR
+Set Codex profile from a stored configuration. Applies the specified profile to ~/.codex/AGENTS.md
+.TP
+.B reset-codex-profile
+Reset the current Codex profile by removing ~/.codex/AGENTS.md
+.SS Profile Management
+.TP
+.B profile list
+List all available profiles in the storage directory
+.TP
+.B profile edit \fIPROFILE_NAME\fR
+Edit an existing profile using the $EDITOR environment variable
+.TP
+.B profile delete \fIPROFILE_NAME\fR
+Delete a profile with confirmation prompt
+.TP
+.B profile create \fIPROFILE_NAME\fR
+Create a new profile using the $EDITOR environment variable
+.TP
+.B profile show \fIPROFILE_NAME\fR
+Display the contents of a profile
+.TP
+.B profile copy \fIPROFILE_NAME\fR
+Copy profile contents to the system clipboard
+.SS Shell Integration
+.TP
+.B completion \fISHELL\fR
+Generate shell completions for the specified shell. Currently supports: zsh
+.SH FILES
+.TP
+.I $XDG_CONFIG_HOME/pmx/
+Primary configuration directory (usually ~/.config/pmx/)
+.TP
+.I ~/.config/pmx/
+Fallback configuration directory if XDG_CONFIG_HOME is not set
+.TP
+.I config.toml
+Configuration file within the pmx directory containing agent settings
+.TP
+.I repo/
+Subdirectory containing profile markdown files
+.TP
+.I ~/.claude/CLAUDE.md
+Target file for Claude profile configurations
+.TP
+.I ~/.codex/AGENTS.md
+Target file for Codex profile configurations
+.SH EXAMPLES
+.TP
+List all available profiles:
+.B pmx profile list
+.TP
+Apply a Claude profile named "backend-dev":
+.B pmx set-claude-profile backend-dev
+.TP
+Create a new profile:
+.B pmx profile create my-new-profile
+.TP
+Reset the current Claude configuration:
+.B pmx reset-claude-profile
+.TP
+Generate zsh completions:
+.B pmx completion zsh > ~/.config/zsh/completions/_pmx
+.TP
+Copy a profile to clipboard:
+.B pmx profile copy backend-dev
+.SH ENVIRONMENT
+.TP
+.B EDITOR
+Used by profile create and edit commands to open profiles for editing
+.TP
+.B XDG_CONFIG_HOME
+Primary location for configuration directory (defaults to ~/.config if not set)
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+General error (invalid arguments, file not found, etc.)
+.SH INSTALLATION
+Install from source using Cargo:
+.RS
+.nf
+cargo install --path . --root ~/.local
+.fi
+.RE
+
+Or install globally:
+.RS
+.nf
+cargo install --path .
+.fi
+.RE
+.SH SEE ALSO
+.BR claude (1),
+.BR cargo (1)
+.SH BUGS
+Report bugs at: https://github.com/nishant-joshi/pmx/issues
+.SH AUTHOR
+Written by Nishant Joshi.
