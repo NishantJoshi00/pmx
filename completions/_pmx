@@ -36,6 +36,9 @@ _pmx() {
                 completion)
                     commands+=('completion:Generate shell completions')
                     ;;
+                mcp)
+                    commands+=('mcp:Run MCP server to expose prompts')
+                    ;;
             esac
         done <<< "$enabled_commands"
         commands+=('help:Print help message')
@@ -50,6 +53,7 @@ _pmx() {
             'append-codex-profile:Append a Codex profile to existing configuration'
             'profile:Profile management commands'
             'completion:Generate shell completions'
+            'mcp:Run MCP server to expose prompts'
             'help:Print help message'
         )
     fi

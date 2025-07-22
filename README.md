@@ -27,7 +27,20 @@ Think of it like switching between different "personas" or instruction sets for 
 - **Easy Sharing**: Copy profiles to clipboard for quick sharing
 - **Zero Setup**: Auto-discovers configuration directories
 
+## ✨ Features
+
+- **Profile Management**: Create, edit, delete, and show profiles with full CRUD operations
+- **Editor Integration**: Edit profiles using your preferred `$EDITOR`
+- **Append Mode**: Add profiles to existing configurations without overwriting
+- **Nested Organization**: Organize profiles in directories for better structure
+- **Smart Display**: Tree-style output in terminal, simple list when piped
+- **Clipboard Support**: Copy profile contents directly to clipboard
+- **Shell Completions**: Tab completion for Zsh (more shells coming soon)
+- **Configuration Control**: Enable/disable specific agents via `config.toml`
+
 ## 🚀 Installation
+
+### From Source
 
 ```bash
 cargo install --path .
@@ -37,6 +50,14 @@ Or install to a specific location:
 ```bash
 cargo install --path . --root ~/.local
 ```
+
+### Building from Source
+
+```bash
+cargo build --release
+```
+
+The binary will be available at `target/release/pmx`
 
 ## 📋 How to Use
 
@@ -51,7 +72,7 @@ cargo install --path . --root ~/.local
 
 **See what profiles you have:**
 ```bash
-pmx list
+pmx profile list
 ```
 
 **Apply a profile to Claude Code:**
@@ -59,9 +80,42 @@ pmx list
 pmx set-claude-profile my-code-reviewer
 ```
 
+**Append to existing Claude profile:**
+```bash
+pmx append-claude-profile additional-instructions
+```
+
 **Apply a profile to OpenAI Codex:**
 ```bash
 pmx set-codex-profile my-documentation-writer
+```
+
+**Append to existing Codex profile:**
+```bash
+pmx append-codex-profile additional-context
+```
+
+**Remove the current profile:**
+```bash
+pmx reset-claude-profile
+pmx reset-codex-profile
+```
+
+### Profile Management Commands
+
+**Create a new profile:**
+```bash
+pmx profile create my-new-profile
+```
+
+**Edit an existing profile:**
+```bash
+pmx profile edit my-profile
+```
+
+**Show profile contents:**
+```bash
+pmx profile show my-profile
 ```
 
 **Copy a profile to your clipboard:**
@@ -69,10 +123,9 @@ pmx set-codex-profile my-documentation-writer
 pmx profile copy project-specific-instructions
 ```
 
-**Remove the current profile:**
+**Delete a profile (with confirmation):**
 ```bash
-pmx reset-claude-profile
-pmx reset-codex-profile
+pmx profile delete old-profile
 ```
 
 ### Example Use Cases
@@ -91,13 +144,22 @@ pmx set-claude-profile tech-writer
 
 **Project-Specific Instructions:**
 ```bash
-pmx set-claude-profile my-startup-context
+pmx set-claude-profile projects/startup
 # Now Claude knows your company's coding standards and domain
+```
+
+**Development Profiles in Nested Directories:**
+```bash
+pmx set-claude-profile development/backend
+# Apply backend-specific development guidelines
+
+pmx append-claude-profile development/security
+# Add security-focused instructions to existing profile
 ```
 
 ## 📁 Profile Organization
 
-PMX stores profiles in `~/.config/pmx/repo/` as Markdown files:
+PMX stores profiles in `~/.config/pmx/repo/` as Markdown files. You can organize profiles in nested directories:
 
 ```
 ~/.config/pmx/
@@ -105,11 +167,15 @@ PMX stores profiles in `~/.config/pmx/repo/` as Markdown files:
 └── repo/                    # Your profiles
     ├── code-reviewer.md     # Focuses on code quality
     ├── tech-writer.md       # Great at documentation
-    ├── debugging-expert.md  # Helps solve complex bugs
-    └── startup-context.md   # Knows your project specifics
+    ├── development/         # Development profiles
+    │   ├── backend.md       # Backend-specific instructions
+    │   └── frontend.md      # Frontend guidelines
+    └── projects/            # Project-specific profiles
+        ├── startup.md       # Startup context
+        └── enterprise.md    # Enterprise standards
 ```
 
-Each profile is just a `.md` file containing the instructions you want your AI agent to follow.
+Each profile is just a `.md` file containing the instructions you want your AI agent to follow. Use directories to organize related profiles together.
 
 ## ⚙️ Setup
 
@@ -118,10 +184,26 @@ PMX works out of the box! It automatically:
 - Sets up the profile repository in `repo/`
 - Configures agent settings in `config.toml`
 
-You can customize the location:
+### Custom Configuration Location
+
+You can override the default configuration directory in two ways:
+
+**Using command-line option:**
+```bash
+pmx --config /path/to/custom/config profile list
+```
+
+**Using environment variable:**
 ```bash
 export PMX_CONFIG_FILE=/path/to/your/config
+pmx profile list
 ```
+
+The priority order is:
+1. `--config` command-line option
+2. `$PMX_CONFIG_FILE` environment variable
+3. `$XDG_CONFIG_HOME/pmx` (if XDG_CONFIG_HOME is set)
+4. `~/.config/pmx` (default)
 
 ## 🔧 Shell Completions
 
@@ -132,6 +214,21 @@ Make typing commands faster with auto-completion:
 source <(pmx completion zsh)
 ```
 
+## 📚 Documentation
+
+Man pages are available in `assets/manual/`. To install:
+
+```bash
+# System-wide installation
+sudo cp assets/manual/pmx.1 /usr/share/man/man1/
+
+# User installation
+mkdir -p ~/.local/share/man/man1
+cp assets/manual/pmx.1 ~/.local/share/man/man1/
+```
+
+Then view with: `man pmx`
+
 ## 🏗️ How It Works
 
 PMX is built in Rust with a modular architecture:
@@ -139,9 +236,22 @@ PMX is built in Rust with a modular architecture:
 - **Storage System**: Auto-discovers config directories and manages profiles
 - **CLI Interface**: Clean command parsing with clap
 - **Agent Modules**: Separate handlers for Claude Code (`~/.claude/CLAUDE.md`) and Codex (`~/.codex/AGENTS.md`)
-- **Profile Management**: Simple file-based storage with clipboard integration
+- **Profile Management**: Full CRUD operations with editor integration and clipboard support
+- **Smart Output**: Tree-style display in terminal, simple list when piped (using `is-terminal`)
+- **Append Mode**: Add profiles to existing configurations without overwriting
+- **Interactive Features**: Confirmation dialogs for destructive operations (using `dialoguer`)
 
 The tool follows a configuration-first approach where agent support can be conditionally enabled/disabled via `config.toml`.
+
+### Key Dependencies
+
+- `clap` - Command-line argument parsing
+- `anyhow` - Error handling
+- `serde`/`toml` - Configuration management
+- `arboard` - Clipboard integration
+- `dialoguer` - Interactive prompts
+- `is-terminal` - Terminal detection for smart output
+- `tempfile` - Safe temporary file handling
 
 ## 🤝 Contributing
 

@@ -146,6 +146,11 @@ pub fn internal_completion(
                 println!("reset-codex-profile");
                 println!("append-codex-profile");
             }
+
+            // MCP command (only if prompts or tools are enabled)
+            if storage.is_mcp_enabled() {
+                println!("mcp");
+            }
         }
         crate::cli::InternalCompletionCommand::ProfileNames => {
             let profile_list = storage.list_repos()?;
@@ -180,6 +185,7 @@ mod tests {
                 disable_codex,
                 disable_cline: false,
             },
+            mcp: crate::storage::McpConfig::default(),
         };
 
         let config_content = toml::to_string(&config).unwrap();
@@ -263,5 +269,37 @@ mod tests {
         let cmd = crate::cli::InternalCompletionCommand::EnabledCommands;
         let result = internal_completion(&storage, &cmd);
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_internal_completion_enabled_commands_with_mcp() {
+        use std::fs;
+        use tempfile::TempDir;
+
+        // Create storage with MCP disabled
+        let temp_dir = TempDir::new().unwrap();
+        let config_path = temp_dir.path().join("config.toml");
+        let repo_dir = temp_dir.path().join("repo");
+        fs::create_dir(&repo_dir).unwrap();
+
+        let config = crate::storage::Config {
+            agents: crate::storage::Agents {
+                disable_claude: true,
+                disable_codex: true,
+                disable_cline: false,
+            },
+            mcp: crate::storage::McpConfig {
+                disable_prompts: crate::storage::DisableOption::Bool(true),
+                disable_tools: crate::storage::DisableOption::Bool(true),
+            },
+        };
+
+        let config_content = toml::to_string(&config).unwrap();
+        fs::write(&config_path, config_content).unwrap();
+
+        let storage = crate::storage::Storage::new(temp_dir.path().to_path_buf()).unwrap();
+
+        // Since we can't easily capture stdout in unit tests, we'll test the logic directly
+        assert!(!storage.is_mcp_enabled());
     }
 }

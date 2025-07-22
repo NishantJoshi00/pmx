@@ -11,6 +11,8 @@ pub struct Storage {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub(crate) struct Config {
     pub(crate) agents: Agents,
+    #[serde(default)]
+    pub(crate) mcp: McpConfig,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -18,6 +20,27 @@ pub(crate) struct Agents {
     pub(crate) disable_claude: bool,
     pub(crate) disable_codex: bool,
     pub(crate) disable_cline: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub(crate) enum DisableOption {
+    Bool(bool),
+    List(Vec<String>),
+}
+
+impl Default for DisableOption {
+    fn default() -> Self {
+        DisableOption::Bool(false)
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub(crate) struct McpConfig {
+    #[serde(default)]
+    pub(crate) disable_prompts: DisableOption,
+    #[serde(default)]
+    pub(crate) disable_tools: DisableOption,
 }
 
 impl Config {
@@ -117,6 +140,7 @@ impl Storage {
                 disable_codex: false,
                 disable_cline: false,
             },
+            mcp: McpConfig::default(),
         };
 
         config.persist(&path)?;
@@ -186,6 +210,21 @@ impl Storage {
             .map_err(|e| anyhow::anyhow!("Failed to read profile '{}': {}", name, e))
     }
 
+    pub fn get_content(&self, name: &str) -> crate::Result<String> {
+        self.get_profile_content(name)
+    }
+
+    pub fn is_mcp_enabled(&self) -> bool {
+        // MCP is enabled if either prompts or tools are not completely disabled
+        match (
+            &self.config.mcp.disable_prompts,
+            &self.config.mcp.disable_tools,
+        ) {
+            (DisableOption::Bool(true), DisableOption::Bool(true)) => false,
+            _ => true,
+        }
+    }
+
     pub fn auto() -> crate::Result<Self> {
         let xdg_data_home = std::env::var("XDG_CONFIG_HOME").ok();
         let other_path = crate::utils::home_dir()
@@ -225,5 +264,103 @@ fn recursive_list(path: &Path) -> crate::Result<Vec<PathBuf>> {
             "Path is neither a file nor a directory: {}",
             path.display()
         )),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    #[test]
+    fn test_is_mcp_enabled_both_disabled() {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test_storage");
+        Storage::initialize(path.clone()).unwrap();
+
+        let config = Config {
+            agents: Agents {
+                disable_claude: false,
+                disable_codex: false,
+                disable_cline: false,
+            },
+            mcp: McpConfig {
+                disable_prompts: DisableOption::Bool(true),
+                disable_tools: DisableOption::Bool(true),
+            },
+        };
+        config.persist(&path).unwrap();
+        let storage = Storage::new(path).unwrap();
+
+        assert!(!storage.is_mcp_enabled());
+    }
+
+    #[test]
+    fn test_is_mcp_enabled_prompts_enabled() {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test_storage");
+        Storage::initialize(path.clone()).unwrap();
+
+        let config = Config {
+            agents: Agents {
+                disable_claude: false,
+                disable_codex: false,
+                disable_cline: false,
+            },
+            mcp: McpConfig {
+                disable_prompts: DisableOption::Bool(false),
+                disable_tools: DisableOption::Bool(true),
+            },
+        };
+        config.persist(&path).unwrap();
+        let storage = Storage::new(path).unwrap();
+
+        assert!(storage.is_mcp_enabled());
+    }
+
+    #[test]
+    fn test_is_mcp_enabled_tools_enabled() {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test_storage");
+        Storage::initialize(path.clone()).unwrap();
+
+        let config = Config {
+            agents: Agents {
+                disable_claude: false,
+                disable_codex: false,
+                disable_cline: false,
+            },
+            mcp: McpConfig {
+                disable_prompts: DisableOption::Bool(true),
+                disable_tools: DisableOption::Bool(false),
+            },
+        };
+        config.persist(&path).unwrap();
+        let storage = Storage::new(path).unwrap();
+
+        assert!(storage.is_mcp_enabled());
+    }
+
+    #[test]
+    fn test_is_mcp_enabled_with_list() {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test_storage");
+        Storage::initialize(path.clone()).unwrap();
+
+        let config = Config {
+            agents: Agents {
+                disable_claude: false,
+                disable_codex: false,
+                disable_cline: false,
+            },
+            mcp: McpConfig {
+                disable_prompts: DisableOption::List(vec!["prompt1".to_string()]),
+                disable_tools: DisableOption::Bool(true),
+            },
+        };
+        config.persist(&path).unwrap();
+        let storage = Storage::new(path).unwrap();
+
+        assert!(storage.is_mcp_enabled());
     }
 }

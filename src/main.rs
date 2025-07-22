@@ -65,6 +65,11 @@ fn main() -> anyhow::Result<()> {
         cli::Command::InternalCompletion(completion_cmd) => {
             pmx::commands::utils::internal_completion(&storage, &completion_cmd)?;
         }
+
+        // MCP server
+        cli::Command::Mcp(_args) => {
+            pmx::commands::mcp::run_mcp_server(storage)?;
+        }
     }
 
     Ok(())

@@ -36,6 +36,8 @@ pub enum Command {
     /// Internal completion commands (hidden)
     #[command(subcommand, hide = true)]
     InternalCompletion(InternalCompletionCommand),
+    /// Run MCP server to expose prompts
+    Mcp(McpArgs),
 }
 
 #[derive(Debug, Args)]
@@ -82,6 +84,11 @@ pub enum ProfileCommand {
 pub struct ProfileArgs {
     /// Name of the profile
     pub name: String,
+}
+
+#[derive(Debug, Args)]
+pub struct McpArgs {
+    // No arguments needed - MCP server reads from config.toml
 }
 
 #[derive(Debug, Subcommand)]

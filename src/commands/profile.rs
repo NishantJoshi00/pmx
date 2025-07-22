@@ -232,6 +232,7 @@ mod tests {
                 disable_codex: false,
                 disable_cline: false,
             },
+            mcp: crate::storage::McpConfig::default(),
         };
 
         let config_content = toml::to_string(&config).unwrap();
