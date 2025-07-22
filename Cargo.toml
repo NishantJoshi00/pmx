@@ -2,6 +2,15 @@
 name = "pmx"
 version = "0.1.0"
 edition = "2024"
+description = "A CLI tool for managing AI agent profiles across different platforms (Claude, Codex)"
+homepage = "https://github.com/NishantJoshi00/pmx"
+repository = "https://github.com/NishantJoshi00/pmx"
+documentation = "https://docs.rs/pmx"
+readme = "README.md"
+keywords = ["cli", "ai", "claude", "profiles", "agent"]
+categories = ["command-line-utilities", "development-tools"]
+license = "MIT"
+authors = ["Nishant Joshi"]
 
 [dependencies]
 clap = { version = "4.5.39", features = ["derive"] }
