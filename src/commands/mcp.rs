@@ -118,7 +118,6 @@ mod tests {
             agents: crate::storage::Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: crate::storage::McpConfig {
                 disable_prompts: crate::storage::DisableOption::Bool(false),
@@ -142,7 +141,6 @@ mod tests {
             agents: crate::storage::Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: crate::storage::McpConfig {
                 disable_prompts: crate::storage::DisableOption::Bool(true),
@@ -166,7 +164,6 @@ mod tests {
             agents: crate::storage::Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: crate::storage::McpConfig {
                 disable_prompts: crate::storage::DisableOption::List(vec![

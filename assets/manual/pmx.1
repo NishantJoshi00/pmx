@@ -1,4 +1,4 @@
-.TH PMX 1 "2025-06-25" "pmx 0.1.0" "User Commands"
+.TH PMX 1 "2025-07-22" "pmx 0.1.0" "User Commands"
 .SH NAME
 pmx \- A prompt management suite for Claude and Codex profiles
 .SH SYNOPSIS
@@ -14,11 +14,19 @@ pmx \- A prompt management suite for Claude and Codex profiles
 .B reset-claude-profile
 .br
 .B pmx
+.B append-claude-profile
+.I PATH
+.br
+.B pmx
 .B set-codex-profile
 .I PROFILE_NAME
 .br
 .B pmx
 .B reset-codex-profile
+.br
+.B pmx
+.B append-codex-profile
+.I PATH
 .br
 .B pmx
 .B profile
@@ -27,6 +35,9 @@ pmx \- A prompt management suite for Claude and Codex profiles
 .B pmx
 .B completion
 .I SHELL
+.br
+.B pmx
+.B mcp
 .SH DESCRIPTION
 .B pmx
 is a command-line tool for managing prompt profiles for AI coding assistants like Claude and Codex. It allows you to store, organize, and apply different configuration profiles to your development environment.
@@ -56,6 +67,9 @@ Set Claude profile from a stored configuration. Applies the specified profile to
 .TP
 .B reset-claude-profile
 Reset the current Claude profile by removing ~/.claude/CLAUDE.md
+.TP
+.B append-claude-profile \fIPATH\fR
+Append Claude profile to existing configuration. Adds the contents of the specified profile file to the end of ~/.claude/CLAUDE.md
 .SS Codex Profile Management
 .TP
 .B set-codex-profile \fIPROFILE_NAME\fR
@@ -63,6 +77,9 @@ Set Codex profile from a stored configuration. Applies the specified profile to 
 .TP
 .B reset-codex-profile
 Reset the current Codex profile by removing ~/.codex/AGENTS.md
+.TP
+.B append-codex-profile \fIPATH\fR
+Append Codex profile to existing configuration. Adds the contents of the specified profile file to the end of ~/.codex/AGENTS.md
 .SS Profile Management
 .TP
 .B profile list
@@ -86,6 +103,10 @@ Copy profile contents to the system clipboard
 .TP
 .B completion \fISHELL\fR
 Generate shell completions for the specified shell. Currently supports: zsh
+.SS MCP Server
+.TP
+.B mcp
+Run MCP (Model Context Protocol) server to expose prompts. This starts a server that provides access to stored prompts through the MCP protocol, allowing integration with AI assistants and development tools
 .SH FILES
 .TP
 .I $XDG_CONFIG_HOME/pmx/
@@ -113,6 +134,9 @@ List all available profiles:
 Apply a Claude profile named "backend-dev":
 .B pmx set-claude-profile backend-dev
 .TP
+Append a profile to existing Claude configuration:
+.B pmx append-claude-profile ./my-additional-profile.md
+.TP
 Create a new profile:
 .B pmx profile create my-new-profile
 .TP
@@ -124,6 +148,9 @@ Generate zsh completions:
 .TP
 Copy a profile to clipboard:
 .B pmx profile copy backend-dev
+.TP
+Start the MCP server:
+.B pmx mcp
 .SH ENVIRONMENT
 .TP
 .B EDITOR

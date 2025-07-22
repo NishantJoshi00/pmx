@@ -151,7 +151,6 @@ TOML configuration structure.
 pub(crate) struct Agents {
     pub(crate) disable_claude: bool,
     pub(crate) disable_codex: bool,
-    pub(crate) disable_cline: bool,
 }
 ```
 

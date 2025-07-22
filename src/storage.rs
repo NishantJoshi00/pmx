@@ -19,7 +19,6 @@ pub(crate) struct Config {
 pub(crate) struct Agents {
     pub(crate) disable_claude: bool,
     pub(crate) disable_codex: bool,
-    pub(crate) disable_cline: bool,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -138,7 +137,6 @@ impl Storage {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: McpConfig::default(),
         };
@@ -282,7 +280,6 @@ mod tests {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: McpConfig {
                 disable_prompts: DisableOption::Bool(true),
@@ -305,7 +302,6 @@ mod tests {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: McpConfig {
                 disable_prompts: DisableOption::Bool(false),
@@ -328,7 +324,6 @@ mod tests {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: McpConfig {
                 disable_prompts: DisableOption::Bool(true),
@@ -351,7 +346,6 @@ mod tests {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: McpConfig {
                 disable_prompts: DisableOption::List(vec!["prompt1".to_string()]),

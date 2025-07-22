@@ -230,7 +230,6 @@ mod tests {
             agents: Agents {
                 disable_claude: false,
                 disable_codex: false,
-                disable_cline: false,
             },
             mcp: crate::storage::McpConfig::default(),
         };

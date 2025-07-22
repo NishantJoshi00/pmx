@@ -48,7 +48,7 @@ This is a Rust CLI tool (`pmx`) for managing Claude profile configurations. The 
   - Looks for config in `$XDG_CONFIG_HOME` or `~/.config/pmx`
   - Auto-initializes storage directory with `repo/` subdirectory for profile files
   - Validates storage structure and config.toml presence
-  - Tracks agent configuration (Claude, Codex, Cline enable/disable flags)
+  - Tracks agent configuration (Claude, Codex enable/disable flags)
 
 - **Commands** (`commands/`): Modular command implementations split across files:
   - `claude_code.rs`: Claude profile management (set/reset to `~/.claude/CLAUDE.md`)
