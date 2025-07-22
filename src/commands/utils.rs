@@ -69,12 +69,10 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
                         } else {
                             "    ├── "
                         }
+                    } else if is_last_file {
+                        "│   └── "
                     } else {
-                        if is_last_file {
-                            "│   └── "
-                        } else {
-                            "│   ├── "
-                        }
+                        "│   ├── "
                     };
                     println!("{}{}", file_prefix, file);
                 }

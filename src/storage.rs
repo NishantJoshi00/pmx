@@ -214,13 +214,13 @@ impl Storage {
 
     pub fn is_mcp_enabled(&self) -> bool {
         // MCP is enabled if either prompts or tools are not completely disabled
-        match (
-            &self.config.mcp.disable_prompts,
-            &self.config.mcp.disable_tools,
-        ) {
-            (DisableOption::Bool(true), DisableOption::Bool(true)) => false,
-            _ => true,
-        }
+        !matches!(
+            (
+                &self.config.mcp.disable_prompts,
+                &self.config.mcp.disable_tools,
+            ),
+            (DisableOption::Bool(true), DisableOption::Bool(true))
+        )
     }
 
     pub fn auto() -> crate::Result<Self> {
