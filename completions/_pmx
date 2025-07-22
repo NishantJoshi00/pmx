@@ -18,17 +18,26 @@ _pmx() {
                 reset-claude-profile)
                     commands+=('reset-claude-profile:Reset the current Claude profile')
                     ;;
+                append-claude-profile)
+                    commands+=('append-claude-profile:Append a Claude profile to existing configuration')
+                    ;;
                 set-codex-profile)
                     commands+=('set-codex-profile:Set a Codex profile')
                     ;;
                 reset-codex-profile)
                     commands+=('reset-codex-profile:Reset the current Codex profile')
                     ;;
+                append-codex-profile)
+                    commands+=('append-codex-profile:Append a Codex profile to existing configuration')
+                    ;;
                 profile)
                     commands+=('profile:Profile management commands')
                     ;;
                 completion)
                     commands+=('completion:Generate shell completions')
+                    ;;
+                mcp)
+                    commands+=('mcp:Run MCP server to expose prompts')
                     ;;
             esac
         done <<< "$enabled_commands"
@@ -38,10 +47,13 @@ _pmx() {
         commands=(
             'set-claude-profile:Set a Claude profile'
             'reset-claude-profile:Reset the current Claude profile'
+            'append-claude-profile:Append a Claude profile to existing configuration'
             'set-codex-profile:Set a Codex profile'
             'reset-codex-profile:Reset the current Codex profile'
+            'append-codex-profile:Append a Codex profile to existing configuration'
             'profile:Profile management commands'
             'completion:Generate shell completions'
+            'mcp:Run MCP server to expose prompts'
             'help:Print help message'
         )
     fi
@@ -50,7 +62,7 @@ _pmx() {
         _describe 'command' commands
     elif (( CURRENT == 3 )); then
         case "$words[2]" in
-            set-claude-profile)
+            set-claude-profile|append-claude-profile)
                 local -a claude_profiles
                 claude_profiles=(${(f)"$(pmx internal-completion claude-profiles 2>/dev/null)"})
                 if [[ ${#claude_profiles[@]} -eq 0 ]]; then
@@ -59,7 +71,7 @@ _pmx() {
                 fi
                 _describe 'profile' claude_profiles
                 ;;
-            set-codex-profile)
+            set-codex-profile|append-codex-profile)
                 local -a codex_profiles
                 codex_profiles=(${(f)"$(pmx internal-completion codex-profiles 2>/dev/null)"})
                 if [[ ${#codex_profiles[@]} -eq 0 ]]; then

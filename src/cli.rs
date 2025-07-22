@@ -20,10 +20,14 @@ pub enum Command {
     SetClaudeProfile(ClaudeProfile),
     /// Reset the current Claude profile
     ResetClaudeProfile,
+    /// Append Claude profile to existing configuration
+    AppendClaudeProfile(ClaudeProfile),
     /// Set Codex profile from a stored configuration
     SetCodexProfile(CodexProfile),
     /// Reset the current Codex profile
     ResetCodexProfile,
+    /// Append Codex profile to existing configuration
+    AppendCodexProfile(CodexProfile),
     /// Profile management commands
     #[command(subcommand)]
     Profile(ProfileCommand),
@@ -32,6 +36,8 @@ pub enum Command {
     /// Internal completion commands (hidden)
     #[command(subcommand, hide = true)]
     InternalCompletion(InternalCompletionCommand),
+    /// Run MCP server to expose prompts
+    Mcp(McpArgs),
 }
 
 #[derive(Debug, Args)]
@@ -78,6 +84,11 @@ pub enum ProfileCommand {
 pub struct ProfileArgs {
     /// Name of the profile
     pub name: String,
+}
+
+#[derive(Debug, Args)]
+pub struct McpArgs {
+    // No arguments needed - MCP server reads from config.toml
 }
 
 #[derive(Debug, Subcommand)]

@@ -182,8 +182,7 @@ Shared functionality across different command types.
 ```toml
 [agents]
 disable_claude = false
-disable_codex = false  
-disable_cline = false
+disable_codex = false
 ```
 
 **Code reference:** [src/storage.rs:11-21](../src/storage.rs#L11-L21)

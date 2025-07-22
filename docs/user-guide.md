@@ -70,13 +70,11 @@ The `config.toml` file controls which agent integrations are enabled:
 [agents]
 disable_claude = false
 disable_codex = false
-disable_cline = false
 ```
 
 **Agent configuration options:**
 - `disable_claude = true` - Hides Claude-related commands
-- `disable_codex = true` - Hides Codex-related commands  
-- `disable_cline = true` - Reserved for future Cline integration
+- `disable_codex = true` - Hides Codex-related commands
 
 ## Basic Commands
 
@@ -342,8 +340,7 @@ done
 mkdir -p ~/.config/pmx/repo
 echo '[agents]
 disable_claude = false
-disable_codex = false
-disable_cline = false' > ~/.config/pmx/config.toml
+disable_codex = false' > ~/.config/pmx/config.toml
 ```
 
 #### Profile Not Found
