@@ -183,18 +183,14 @@ fn validate_profile_name(name: &str) -> crate::Result<()> {
 
     // Check for path traversal attempts
     if name.contains("..") || name.contains('\\') {
-        return Err(anyhow!(
-            "Profile name cannot contain '..' or backslashes"
-        ));
+        return Err(anyhow!("Profile name cannot contain '..' or backslashes"));
     }
 
     // Ensure no empty path components when using forward slashes
     if name.contains('/') {
         for component in name.split('/') {
             if component.is_empty() {
-                return Err(anyhow!(
-                    "Profile name cannot have empty path components"
-                ));
+                return Err(anyhow!("Profile name cannot have empty path components"));
             }
             if component == "." || component == ".." {
                 return Err(anyhow!(

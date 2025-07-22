@@ -20,10 +20,14 @@ pub enum Command {
     SetClaudeProfile(ClaudeProfile),
     /// Reset the current Claude profile
     ResetClaudeProfile,
+    /// Append Claude profile to existing configuration
+    AppendClaudeProfile(ClaudeProfile),
     /// Set Codex profile from a stored configuration
     SetCodexProfile(CodexProfile),
     /// Reset the current Codex profile
     ResetCodexProfile,
+    /// Append Codex profile to existing configuration
+    AppendCodexProfile(CodexProfile),
     /// Profile management commands
     #[command(subcommand)]
     Profile(ProfileCommand),

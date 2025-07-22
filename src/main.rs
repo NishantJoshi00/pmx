@@ -46,6 +46,9 @@ fn main() -> anyhow::Result<()> {
         cli::Command::ResetClaudeProfile => {
             pmx::commands::claude_code::reset_claude_profile(&storage)?;
         }
+        cli::Command::AppendClaudeProfile(profile) => {
+            pmx::commands::claude_code::append_claude_profile(&storage, &profile.path)?;
+        }
 
         // openai_codex
         cli::Command::SetCodexProfile(profile) => {
@@ -53,6 +56,9 @@ fn main() -> anyhow::Result<()> {
         }
         cli::Command::ResetCodexProfile => {
             pmx::commands::openai_codex::reset_codex_profile(&storage)?;
+        }
+        cli::Command::AppendCodexProfile(profile) => {
+            pmx::commands::openai_codex::append_codex_profile(&storage, &profile.path)?;
         }
 
         // internal completion

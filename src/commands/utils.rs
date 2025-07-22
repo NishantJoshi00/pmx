@@ -20,12 +20,14 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
 
     // For terminal output, create a tree-like structure
     let mut tree: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    
+
     for profile in &profile_list {
         if let Some(slash_pos) = profile.find('/') {
             let (dir, file) = profile.split_at(slash_pos);
             let file = &file[1..]; // Remove the leading '/'
-            tree.entry(dir.to_string()).or_default().push(file.to_string());
+            tree.entry(dir.to_string())
+                .or_default()
+                .push(file.to_string());
         } else {
             tree.entry(String::new()).or_default().push(profile.clone());
         }
@@ -35,35 +37,51 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
     let dirs: Vec<_> = tree.keys().collect();
     for (i, dir) in dirs.iter().enumerate() {
         let is_last_dir = i == dirs.len() - 1;
-        
+
         if dir.is_empty() {
             // Root level files
             if let Some(files) = tree.get(*dir) {
                 for (j, file) in files.iter().enumerate() {
                     let is_last_file = j == files.len() - 1 && is_last_dir;
-                    let prefix = if is_last_file { "└── " } else { "├── " };
+                    let prefix = if is_last_file {
+                        "└── "
+                    } else {
+                        "├── "
+                    };
                     println!("{}{}", prefix, file);
                 }
             }
         } else {
             // Directory
-            let dir_prefix = if is_last_dir { "└── " } else { "├── " };
+            let dir_prefix = if is_last_dir {
+                "└── "
+            } else {
+                "├── "
+            };
             println!("{}{}/", dir_prefix, dir);
-            
+
             if let Some(files) = tree.get(*dir) {
                 for (j, file) in files.iter().enumerate() {
                     let is_last_file = j == files.len() - 1;
                     let file_prefix = if is_last_dir {
-                        if is_last_file { "    └── " } else { "    ├── " }
+                        if is_last_file {
+                            "    └── "
+                        } else {
+                            "    ├── "
+                        }
                     } else {
-                        if is_last_file { "│   └── " } else { "│   ├── " }
+                        if is_last_file {
+                            "│   └── "
+                        } else {
+                            "│   ├── "
+                        }
                     };
                     println!("{}{}", file_prefix, file);
                 }
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -121,10 +139,12 @@ pub fn internal_completion(
             if !storage.config.agents.disable_claude {
                 println!("set-claude-profile");
                 println!("reset-claude-profile");
+                println!("append-claude-profile");
             }
             if !storage.config.agents.disable_codex {
                 println!("set-codex-profile");
                 println!("reset-codex-profile");
+                println!("append-codex-profile");
             }
         }
         crate::cli::InternalCompletionCommand::ProfileNames => {
