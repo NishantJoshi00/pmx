@@ -167,18 +167,18 @@ impl Storage {
     }
 
     pub fn get_repo_path(&self, path: &str) -> crate::Result<PathBuf> {
-        let repo_path = self.path.join("repo").join(format!("{}.md", path));
+        let repo_path = self.path.join("repo").join(format!("{path}.md"));
         ensure!(repo_path.exists(), "Profile not found: {}", path);
         Ok(repo_path)
     }
 
     pub fn profile_exists(&self, name: &str) -> bool {
-        let repo_path = self.path.join("repo").join(format!("{}.md", name));
+        let repo_path = self.path.join("repo").join(format!("{name}.md"));
         repo_path.exists()
     }
 
     pub fn create_profile(&self, name: &str, content: &str) -> crate::Result<()> {
-        let repo_path = self.path.join("repo").join(format!("{}.md", name));
+        let repo_path = self.path.join("repo").join(format!("{name}.md"));
 
         // Ensure parent directory exists
         if let Some(parent) = repo_path.parent() {
@@ -234,7 +234,7 @@ impl Storage {
             .unwrap_or_else(|| other_path.clone());
 
         Self::new(path).or_else(|e| {
-            eprintln!("Failed to load storage from {:?}: {}", other_path, e);
+            eprintln!("Failed to load storage from {other_path:?}: {e}");
             Self::initialize(other_path)
         })
     }

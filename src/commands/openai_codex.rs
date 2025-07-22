@@ -7,7 +7,7 @@ pub fn set_codex_profile(storage: &crate::storage::Storage, profile: &str) -> cr
     );
 
     let repo_path = storage.path.join("repo");
-    let source_file = repo_path.join(format!("{}.md", profile));
+    let source_file = repo_path.join(format!("{profile}.md"));
 
     if !source_file.exists() {
         anyhow::bail!(
@@ -72,7 +72,7 @@ pub fn append_codex_profile(storage: &crate::storage::Storage, profile: &str) ->
     );
 
     let repo_path = storage.path.join("repo");
-    let source_file = repo_path.join(format!("{}.md", profile));
+    let source_file = repo_path.join(format!("{profile}.md"));
 
     if !source_file.exists() {
         anyhow::bail!(
@@ -95,7 +95,7 @@ pub fn append_codex_profile(storage: &crate::storage::Storage, profile: &str) ->
         let existing_content = std::fs::read_to_string(&system_prompt_location)
             .map_err(|e| anyhow::anyhow!("Failed to read existing Codex profile: {}", e))?;
 
-        let combined_content = format!("{}\n\n{}", existing_content, profile_content);
+        let combined_content = format!("{existing_content}\n\n{profile_content}");
 
         std::fs::write(&system_prompt_location, combined_content)
             .map_err(|e| anyhow::anyhow!("Failed to append profile '{}': {}", profile, e))?;

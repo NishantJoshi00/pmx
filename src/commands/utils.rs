@@ -14,7 +14,7 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
     if !io::stdout().is_terminal() {
         profile_list
             .iter()
-            .for_each(|profile| println!("{}", profile));
+            .for_each(|profile| println!("{profile}"));
         return Ok(());
     }
 
@@ -48,7 +48,7 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
                     } else {
                         "├── "
                     };
-                    println!("{}{}", prefix, file);
+                    println!("{prefix}{file}");
                 }
             }
         } else {
@@ -58,7 +58,7 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
             } else {
                 "├── "
             };
-            println!("{}{}/", dir_prefix, dir);
+            println!("{dir_prefix}{dir}/");
 
             if let Some(files) = tree.get(*dir) {
                 for (j, file) in files.iter().enumerate() {
@@ -74,7 +74,7 @@ pub fn list(storage: &crate::storage::Storage) -> crate::Result<()> {
                     } else {
                         "│   ├── "
                     };
-                    println!("{}{}", file_prefix, file);
+                    println!("{file_prefix}{file}");
                 }
             }
         }
@@ -93,7 +93,7 @@ pub fn copy_profile(path: &str, storage: &crate::storage::Storage) -> crate::Res
     let mut clipboard = Clipboard::new()?;
     clipboard.set_text(content)?;
 
-    println!("Profile content copied to clipboard: {}", path);
+    println!("Profile content copied to clipboard: {path}");
     Ok(())
 }
 
@@ -101,7 +101,7 @@ pub fn completion(shell: &crate::cli::Shell) -> crate::Result<()> {
     match shell {
         crate::cli::Shell::Zsh => {
             const ZSH_COMPLETION: &str = include_str!("../../completions/_pmx");
-            print!("{}", ZSH_COMPLETION);
+            print!("{ZSH_COMPLETION}");
         }
     }
     Ok(())
@@ -117,7 +117,7 @@ pub fn internal_completion(
                 let profile_list = storage.list_repos()?;
                 profile_list
                     .iter()
-                    .for_each(|profile| println!("{}", profile));
+                    .for_each(|profile| println!("{profile}"));
             }
         }
         crate::cli::InternalCompletionCommand::CodexProfiles => {
@@ -125,7 +125,7 @@ pub fn internal_completion(
                 let profile_list = storage.list_repos()?;
                 profile_list
                     .iter()
-                    .for_each(|profile| println!("{}", profile));
+                    .for_each(|profile| println!("{profile}"));
             }
         }
         crate::cli::InternalCompletionCommand::EnabledCommands => {
@@ -154,7 +154,7 @@ pub fn internal_completion(
             let profile_list = storage.list_repos()?;
             profile_list
                 .iter()
-                .for_each(|profile| println!("{}", profile));
+                .for_each(|profile| println!("{profile}"));
         }
     }
     Ok(())

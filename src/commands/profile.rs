@@ -15,13 +15,13 @@ pub fn edit(storage: &crate::storage::Storage, name: &str) -> crate::Result<()> 
     let status = Command::new(&editor)
         .arg(&profile_path)
         .status()
-        .with_context(|| format!("Failed to execute editor: {}", editor))?;
+        .with_context(|| format!("Failed to execute editor: {editor}"))?;
 
     if !status.success() {
         return Err(anyhow!("Editor exited with non-zero status"));
     }
 
-    println!("Profile '{}' edited successfully", name);
+    println!("Profile '{name}' edited successfully");
     Ok(())
 }
 
@@ -31,15 +31,15 @@ pub fn delete(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
 
     // Show profile content before deletion
     let content = fs::read_to_string(&profile_path)
-        .with_context(|| format!("Failed to read profile: {}", name))?;
+        .with_context(|| format!("Failed to read profile: {name}"))?;
 
-    println!("Profile '{}' contents:", name);
-    println!("{}", content);
+    println!("Profile '{name}' contents:");
+    println!("{content}");
     println!();
 
     // Ask for confirmation
     let confirmed = Confirm::new()
-        .with_prompt(format!("Delete profile '{}'?", name))
+        .with_prompt(format!("Delete profile '{name}'?"))
         .default(false)
         .interact()
         .with_context(|| "Failed to get confirmation")?;
@@ -51,7 +51,7 @@ pub fn delete(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
 
     // Delete the profile
     storage.delete_profile(name)?;
-    println!("Profile '{}' deleted successfully", name);
+    println!("Profile '{name}' deleted successfully");
     Ok(())
 }
 
@@ -72,7 +72,7 @@ pub fn create(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
         tempfile::NamedTempFile::new().with_context(|| "Failed to create temporary file")?;
 
     // Write initial template content
-    let template = format!("# {}\n\n<!-- Add your profile content here -->\n", name);
+    let template = format!("# {name}\n\n<!-- Add your profile content here -->\n");
     fs::write(temp_file.path(), template)
         .with_context(|| "Failed to write template to temporary file")?;
 
@@ -83,7 +83,7 @@ pub fn create(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
     let status = Command::new(&editor)
         .arg(temp_file.path())
         .status()
-        .with_context(|| format!("Failed to execute editor: {}", editor))?;
+        .with_context(|| format!("Failed to execute editor: {editor}"))?;
 
     if !status.success() {
         return Err(anyhow!("Editor exited with non-zero status"));
@@ -95,15 +95,11 @@ pub fn create(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
 
     // Check if the content is effectively empty (only whitespace, comments, or original template)
     let trimmed_content = content.trim();
-    let template_header = format!("# {}", name);
+    let template_header = format!("# {name}");
     let is_empty = trimmed_content.is_empty()
         || trimmed_content == template_header
         || trimmed_content
-            == format!(
-                "{}\n\n<!-- Add your profile content here -->",
-                template_header
-            )
-            .trim()
+            == format!("{template_header}\n\n<!-- Add your profile content here -->").trim()
         || trimmed_content.lines().all(|line| {
             let line = line.trim();
             line.is_empty() || line.starts_with('#') || line.starts_with("<!--")
@@ -116,13 +112,13 @@ pub fn create(storage: &crate::storage::Storage, name: &str) -> crate::Result<()
 
     // Create the profile
     storage.create_profile(name, &content)?;
-    println!("Profile '{}' created successfully", name);
+    println!("Profile '{name}' created successfully");
     Ok(())
 }
 
 pub fn show(storage: &crate::storage::Storage, name: &str) -> crate::Result<()> {
     let content = storage.get_profile_content(name)?;
-    println!("{}", content);
+    println!("{content}");
     Ok(())
 }
 

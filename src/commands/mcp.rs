@@ -55,7 +55,7 @@ impl ServerHandler for PmxMcpServer {
             if self.is_prompt_enabled(&profile) {
                 prompts.push(Prompt::new(
                     &profile,
-                    Some(&format!("System prompt: {}", profile)),
+                    Some(&format!("System prompt: {profile}")),
                     None,
                 ));
             }
@@ -79,7 +79,7 @@ impl ServerHandler for PmxMcpServer {
         let content = self
             .storage
             .get_content(&name)
-            .map_err(|e| McpError::invalid_params(format!("Prompt not found: {}", e), None))?;
+            .map_err(|e| McpError::invalid_params(format!("Prompt not found: {e}"), None))?;
 
         Ok(GetPromptResult {
             description: None,
