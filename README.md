@@ -9,6 +9,10 @@
 
 # PMX
 
+[![Crates.io](https://img.shields.io/crates/v/pmx.svg)](https://crates.io/crates/pmx)
+[![CI](https://github.com/NishantJoshi00/pmx/workflows/CI/badge.svg)](https://github.com/NishantJoshi00/pmx/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 A simple CLI tool to manage and switch between AI agent profiles across different platforms.
 
 </div>
@@ -39,6 +43,18 @@ Think of it like switching between different "personas" or instruction sets for 
 - **Configuration Control**: Enable/disable specific agents via `config.toml`
 
 ## 🚀 Installation
+
+### From crates.io
+
+Once published, you can install `pmx` directly from crates.io:
+
+```bash
+cargo install pmx
+```
+
+This will install the `pmx` binary to your Cargo bin directory (typically `~/.cargo/bin/`). Make sure this directory is in your `PATH`.
+
+**Prerequisites:** Rust and Cargo must be installed. You can install them from [rustup.rs](https://rustup.rs/).
 
 ### From Source
 
