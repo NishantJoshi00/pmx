@@ -279,6 +279,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "Clipboard tests require display environment"]
     fn test_copy_existing_profile() {
         let (_temp_dir, storage) = create_test_storage();
         let result = copy(&storage, "test_profile");
