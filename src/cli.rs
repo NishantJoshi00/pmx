@@ -38,6 +38,9 @@ pub enum Command {
     InternalCompletion(InternalCompletionCommand),
     /// Run MCP server to expose prompts
     Mcp(McpArgs),
+    /// Execute extension subcommand
+    #[command(external_subcommand)]
+    Extension(Vec<String>),
 }
 
 #[derive(Debug, Args)]

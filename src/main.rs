@@ -70,6 +70,11 @@ fn main() -> anyhow::Result<()> {
         cli::Command::Mcp(_args) => {
             pmx::commands::mcp::run_mcp_server(storage)?;
         }
+
+        // Extension subcommands
+        cli::Command::Extension(args) => {
+            pmx::commands::extensions::execute_extension(&storage, &args)?;
+        }
     }
 
     Ok(())

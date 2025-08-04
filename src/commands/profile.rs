@@ -228,6 +228,7 @@ mod tests {
                 disable_codex: false,
             },
             mcp: crate::storage::McpConfig::default(),
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
 
         let config_content = toml::to_string(&config).unwrap();

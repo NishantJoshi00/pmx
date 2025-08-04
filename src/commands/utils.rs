@@ -183,6 +183,7 @@ mod tests {
                 disable_codex,
             },
             mcp: crate::storage::McpConfig::default(),
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
 
         let config_content = toml::to_string(&config).unwrap();
@@ -288,6 +289,7 @@ mod tests {
                 disable_prompts: crate::storage::DisableOption::Bool(true),
                 disable_tools: crate::storage::DisableOption::Bool(true),
             },
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
 
         let config_content = toml::to_string(&config).unwrap();

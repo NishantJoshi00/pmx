@@ -13,6 +13,8 @@ pub(crate) struct Config {
     pub(crate) agents: Agents,
     #[serde(default)]
     pub(crate) mcp: McpConfig,
+    #[serde(default)]
+    pub(crate) extensions: ExtensionsConfig,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -40,6 +42,12 @@ pub(crate) struct McpConfig {
     pub(crate) disable_prompts: DisableOption,
     #[serde(default)]
     pub(crate) disable_tools: DisableOption,
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub(crate) struct ExtensionsConfig {
+    #[serde(default)]
+    pub(crate) allowed_subcommands: Vec<String>,
 }
 
 impl Config {
@@ -139,6 +147,7 @@ impl Storage {
                 disable_codex: false,
             },
             mcp: McpConfig::default(),
+            extensions: ExtensionsConfig::default(),
         };
 
         config.persist(&path)?;
@@ -223,6 +232,10 @@ impl Storage {
         )
     }
 
+    pub fn is_extension_allowed(&self, subcommand: &str) -> bool {
+        self.config.extensions.allowed_subcommands.contains(&subcommand.to_string())
+    }
+
     pub fn auto() -> crate::Result<Self> {
         let xdg_data_home = std::env::var("XDG_CONFIG_HOME").ok();
         let other_path = crate::utils::home_dir()
@@ -285,6 +298,7 @@ mod tests {
                 disable_prompts: DisableOption::Bool(true),
                 disable_tools: DisableOption::Bool(true),
             },
+            extensions: ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = Storage::new(path).unwrap();
@@ -307,6 +321,7 @@ mod tests {
                 disable_prompts: DisableOption::Bool(false),
                 disable_tools: DisableOption::Bool(true),
             },
+            extensions: ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = Storage::new(path).unwrap();
@@ -329,6 +344,7 @@ mod tests {
                 disable_prompts: DisableOption::Bool(true),
                 disable_tools: DisableOption::Bool(false),
             },
+            extensions: ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = Storage::new(path).unwrap();
@@ -351,10 +367,36 @@ mod tests {
                 disable_prompts: DisableOption::List(vec!["prompt1".to_string()]),
                 disable_tools: DisableOption::Bool(true),
             },
+            extensions: ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = Storage::new(path).unwrap();
 
         assert!(storage.is_mcp_enabled());
+    }
+
+    #[test]
+    fn test_is_extension_allowed() {
+        let temp_dir = TempDir::new().unwrap();
+        let path = temp_dir.path().join("test_storage");
+        Storage::initialize(path.clone()).unwrap();
+
+        let config = Config {
+            agents: Agents {
+                disable_claude: false,
+                disable_codex: false,
+            },
+            mcp: McpConfig::default(),
+            extensions: ExtensionsConfig {
+                allowed_subcommands: vec!["test-cmd".to_string(), "another-cmd".to_string()],
+            },
+        };
+        config.persist(&path).unwrap();
+        let storage = Storage::new(path).unwrap();
+
+        assert!(storage.is_extension_allowed("test-cmd"));
+        assert!(storage.is_extension_allowed("another-cmd"));
+        assert!(!storage.is_extension_allowed("not-allowed"));
+        assert!(!storage.is_extension_allowed("malicious/path"));
     }
 }

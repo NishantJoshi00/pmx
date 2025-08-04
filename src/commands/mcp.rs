@@ -123,6 +123,7 @@ mod tests {
                 disable_prompts: crate::storage::DisableOption::Bool(false),
                 disable_tools: crate::storage::DisableOption::Bool(false),
             },
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = crate::storage::Storage::new(path).unwrap();
@@ -146,6 +147,7 @@ mod tests {
                 disable_prompts: crate::storage::DisableOption::Bool(true),
                 disable_tools: crate::storage::DisableOption::Bool(false),
             },
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = crate::storage::Storage::new(path).unwrap();
@@ -171,6 +173,7 @@ mod tests {
                 ]),
                 disable_tools: crate::storage::DisableOption::Bool(false),
             },
+            extensions: crate::storage::ExtensionsConfig::default(),
         };
         config.persist(&path).unwrap();
         let storage = crate::storage::Storage::new(path).unwrap();
