@@ -233,7 +233,10 @@ impl Storage {
     }
 
     pub fn is_extension_allowed(&self, subcommand: &str) -> bool {
-        self.config.extensions.allowed_subcommands.contains(&subcommand.to_string())
+        self.config
+            .extensions
+            .allowed_subcommands
+            .contains(&subcommand.to_string())
     }
 
     pub fn auto() -> crate::Result<Self> {
