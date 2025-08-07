@@ -1,1 +1,5 @@
 /target
+
+# PMX Claude configuration
+.pmx-claude.json
+.claude-agents/

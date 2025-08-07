@@ -1,0 +1,42 @@
+{
+  "name": "pmx-claude",
+  "version": "1.0.0",
+  "description": "Claude Code agent runner for PMX - run AI agents on your current directory",
+  "main": "dist/index.js",
+  "bin": {
+    "pmx-claude": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/cli.ts",
+    "start": "node dist/cli.js",
+    "watch": "nodemon --exec ts-node src/cli.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pmx",
+    "claude",
+    "ai",
+    "agents",
+    "code-assistant"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.57.0",
+    "@anthropic-ai/vertex-sdk": "^0.12.1",
+    "chalk": "^5.5.0",
+    "commander": "^14.0.0",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.3",
+    "google-auth-library": "^10.2.0",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.1.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
