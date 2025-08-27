@@ -129,17 +129,17 @@ pub fn copy(storage: &crate::storage::Storage, name: &str) -> crate::Result<()> 
 
 fn get_editor() -> crate::Result<String> {
     // Try $EDITOR first
-    if let Ok(editor) = env::var("EDITOR") {
-        if !editor.is_empty() {
-            return Ok(editor);
-        }
+    if let Ok(editor) = env::var("EDITOR")
+        && !editor.is_empty()
+    {
+        return Ok(editor);
     }
 
     // Try $VISUAL as fallback
-    if let Ok(editor) = env::var("VISUAL") {
-        if !editor.is_empty() {
-            return Ok(editor);
-        }
+    if let Ok(editor) = env::var("VISUAL")
+        && !editor.is_empty()
+    {
+        return Ok(editor);
     }
 
     // Platform-specific defaults

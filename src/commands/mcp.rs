@@ -4,8 +4,8 @@ use rmcp::{
     model::{ErrorData as McpError, *},
     service::RequestContext,
 };
-use tokio::io::{stdin, stdout};
 use serde_json::Value;
+use tokio::io::{stdin, stdout};
 
 #[derive(Clone)]
 pub struct PmxMcpServer {
@@ -30,12 +30,12 @@ impl PmxMcpServer {
     /// Extract argument templates from prompt content using <{{variable}}> pattern
     fn extract_arguments_from_content(&self, content: &str) -> Vec<PromptArgument> {
         use regex::Regex;
-        
+
         // Pattern matches <{{VARIABLE_NAME}}> where VARIABLE_NAME can contain letters, numbers, underscores
         let re = Regex::new(r"<\{\{([A-Za-z_][A-Za-z0-9_]*)\}\}>").unwrap();
         let mut arguments = Vec::new();
         let mut seen = std::collections::HashSet::new();
-        
+
         for cap in re.captures_iter(content) {
             if let Some(var_name) = cap.get(1) {
                 let name = var_name.as_str().to_string();
@@ -49,7 +49,7 @@ impl PmxMcpServer {
                 }
             }
         }
-        
+
         arguments
     }
 
@@ -58,10 +58,10 @@ impl PmxMcpServer {
         let Some(args) = arguments else {
             return content.to_string();
         };
-        
+
         use regex::Regex;
         let re = Regex::new(r"<\{\{([A-Za-z_][A-Za-z0-9_]*)\}\}>").unwrap();
-        
+
         re.replace_all(content, |caps: &regex::Captures| {
             let var_name = &caps[1];
             match args.get(var_name) {
@@ -69,7 +69,8 @@ impl PmxMcpServer {
                 Some(other) => other.to_string().trim_matches('"').to_string(),
                 None => caps.get(0).unwrap().as_str().to_string(), // Keep original if not found
             }
-        }).to_string()
+        })
+        .to_string()
     }
 }
 
@@ -168,8 +169,8 @@ pub fn run_mcp_server(storage: crate::storage::Storage) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::TempDir;
     use serde_json::json;
+    use tempfile::TempDir;
 
     #[test]
     fn test_is_prompt_enabled() {
@@ -248,10 +249,13 @@ mod tests {
         let mut args = serde_json::Map::new();
         args.insert("URL".to_string(), json!("https://example.com"));
         let result = server.substitute_arguments(content, &Some(args));
-        assert_eq!(result, "Please visit https://example.com for more information.");
+        assert_eq!(
+            result,
+            "Please visit https://example.com for more information."
+        );
 
         // Test multiple substitutions
-        let content2 = "Connect to <{{HOST}}> on port <{{PORT}}>"; 
+        let content2 = "Connect to <{{HOST}}> on port <{{PORT}}>";
         let mut args2 = serde_json::Map::new();
         args2.insert("HOST".to_string(), json!("localhost"));
         args2.insert("PORT".to_string(), json!(8080));
